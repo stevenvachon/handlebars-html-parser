@@ -1,0 +1,70 @@
+<fieldset {{#if edit}}class="open"{{/if}}>
+	<legend class="hidden">File Extensions</legend>
+	<p role="presentation">
+		<span>{{numExtensionsSelected}} file extensions.</span>
+		<button name="edit" can-click="open">Edit</button>
+	</p>
+	<div>
+		{{#each globals.extensions.code}}
+			<label><input type="checkbox" name="selectedExtensions" {{#if selected}}checked{{/if}} can-value="selected"/>*.{{@key}}</label>
+		{{/each}}
+	</div>
+	<button name="update" can-click="update">Update</button>
+	<button name="cancel" can-click="cancel">Cancel</button>
+	<label><input type="checkbox" name="selectAll" can-value="allSelected" can-click="toggleAll">Select all</label>
+</fieldset>
+
+<table>
+	<colgroup>
+		{{#each columns}}
+			<col class="{{#if sorting}}sort-{{#if ascending}}ascend{{else}}descend{{/if}}{{/if}}"/>
+		{{/each}}
+	</colgroup>
+	<thead>
+		<tr>
+			{{#each columns}}
+				<th class="{{#if sorting}}sort-{{#if ascending}}ascend{{else}}descend{{/if}}{{/if}}" can-click="sortColumn">
+					{{name}}
+				</th>
+			{{/each}}
+		</tr>
+	</thead>
+	<tbody>
+		{{#if globals.numFilesFiltered}}
+			{{#each globals.files}}
+				{{#if included}}
+					{{#if error}}
+						<tr>
+							<td class="error" title="{{path}}">{{path}}</td>
+							<td>-</td>
+							<td>-</td>
+						</tr>
+					{{else}}
+						<tr>
+							<td title="{{path}}">{{path}}</td>
+							<td>
+								{{#formatFileSize size}}
+									{{value}}
+									{{#if unitShort}}
+										<abbr title="{{unitLong}}">{{unitShort}}</abbr>
+									{{else}}
+										<span style="text-transform:lowercase">{{unitLong}}</span>
+									{{/if}}
+								{{/formatFileSize}}
+							</td>
+							<td>
+								<time datetime="{{formatDate lastModifiedDate 'iso'}}" title="{{formatDate lastModifiedDate 'dddd, MMMM D, YYYY [at] h:mm A'}}">
+									{{formatDate lastModifiedDate 'MM/DD/YYYY'}}
+								</time>
+							</td>
+						</tr>
+					{{/if}}
+				{{/if}}
+			{{/each}}
+		{{else}}
+			<tr>
+				<td colspan="{{columns.length}}">No files found matching your criteria.</td>
+			</tr>
+		{{/if}}
+	</tbody>
+</table>
