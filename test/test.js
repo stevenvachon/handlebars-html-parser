@@ -2,24 +2,42 @@ var fs = require("fs");
 var log = require("./devlog.js").log;
 var parser = require("../lib");
 
-var test = __dirname+"/templates/basic.hbs";
+var test = __dirname+"/templates/test.hbs";
 //var test = __dirname+"/templates/test.html";
 test = fs.readFileSync(test, {encoding:"utf8"});
 
+console.log(test);
+
+//return require("dombars").compile(test)({});
+
 test = new parser(
 {
-	htmlTagStart: function(tagName/*, hasAttributes*/)
+	hbsComment: function(text)
 	{
-		log(["htmlTagStart", tagName]);
-		// React.DOM[tagName] || React.createElement(tagName)
-		// tagName == 'span';
-		// hasAttributes == true;
+		// text == 'comment text';
 	},
-	htmlTagEnd: function(tagName/*, selfClosing*/)
+	hbsHelperStart: function(id, params)
 	{
-		log(["htmlTagEnd", tagName]);
-		// tagName == 'span';
-		// selfClosing == false;
+		log(["hbsHelperStart", id, params]);
+		// type == 'if';
+		// params == ['variable1'];
+	},
+	hbsHelperEnd: function(id)
+	{
+		log(["hbsHelperEnd", id]);
+		// text == 'if';
+	},
+	hbsSectionStart: function(id)
+	{
+		log(["hbsSectionStart", id]);
+	},
+	hbsSectionEnd: function(id)
+	{
+		log(["hbsSectionEnd", id]);
+	},
+	hbsVariable: function(id)
+	{
+		log(["hbsVariable", id]);
 	},
 	htmlAttributeStart: function(attributeName, attributeValue)
 	{
@@ -35,43 +53,34 @@ test = new parser(
 	{
 		// text == 'value3 value4';
 	},*/
-	htmlText: function(text)
-	{
-		log(["htmlText", text]);
-		// text == 'value5';
-	},
 	htmlComment: function(text)
 	{
 		// text == 'comment text';
 	},
-	hbsComment: function(text)
+	htmlTagStart: function(tagName/*, hasAttributes*/)
 	{
-		// text == 'comment text';
+		log(["htmlTagStart", tagName]);
+		// React.DOM[tagName] || React.createElement(tagName)
+		// tagName == 'span';
+		// hasAttributes == true;
 	},
-	hbsVariable: function(id)
+	htmlTagEnd: function(tagName/*, selfClosing*/)
 	{
-		log(["hbsVariable", id]);
+		log(["htmlTagEnd", tagName]);
+		// tagName == 'span';
+		// selfClosing == false;
 	},
-	hbsSectionStart: function(id)
+	text: function(text)
 	{
-		log(["hbsSectionStart", id]);
+		log(["text", text]);
+		// text == 'value5';
 	},
-	hbsSectionEnd: function(id)
+	processingInstruction: function(name, data)
 	{
-		log(["hbsSectionEnd", id]);
+		log(["processingInstruction", name, data]);
 	},
-	hbsHelperStart: function(id, params)
+	error: function(error)
 	{
-		log(["hbsHelperStart", id, params]);
-		// type == 'if';
-		// params == ['variable1'];
-	},
-	hbsHelperEnd: function(id)
-	{
-		log(["hbsHelperEnd", id]);
-		// text == 'if';
+		log(["error", error]);
 	}
 }).parse(test);
-
-// TEMP
-//log(test);
