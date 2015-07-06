@@ -4,19 +4,23 @@
 
 Parse this:
 ```handlebars
-<{{tag}}>value</{{tag}}>
+<{{tag}}>value</{{{~tag~}}}>
 ```
 into this:
 ```js
 [
     { type:"htmlTagStart", closing:false },
     { type:"htmlTagNameStart" },
-    { type:"hbsVariable", id:"tag" },
+    { type:"hbsTagStart", escaped:true, stripWhitespace:false, block:false, closing:false, comment:false },
+    { type:"hbsExpression", parts:["tag"] },
+    { type:"hbsTagEnd", escaped:true, stripWhitespace:false },
     { type:"htmlTagNameEnd" },
     { type:"text", text:"value" },
     { type:"htmlTagStart", closing:true },
     { type:"htmlTagNameStart" },
-    { type:"hbsVariable", id:"tag" },
+    { type:"hbsTagStart", escaped:false, stripWhitespace:true, block:false, closing:true, comment:false },
+    { type:"hbsExpression", parts:["tag"] },
+    { type:"hbsTagEnd", escaped:false, stripWhitespace:true },
     { type:"htmlTagNameEnd" },
     { type:"htmlTagEnd" }
 ]
@@ -42,7 +46,7 @@ As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf
 
 
 ## Changelog
-* 0.0.1–0.0.4 pre-releases
+* 0.0.1–0.0.5 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg
