@@ -4,23 +4,27 @@
 
 Parse this:
 ```handlebars
-<{{tag}}>value</{{{~tag~}}}>
+<{{tag}}> value {{{value~}}} </tag>
 ```
 into this:
 ```js
 [
-    { type:"htmlTagStart", closing:false },
+    { type:"htmlTagStart" },
     { type:"htmlTagNameStart" },
-    { type:"hbsTagStart", escaped:true, stripWhitespace:false, block:false, closing:false, comment:false },
-    { type:"hbsExpression", parts:["tag"] },
-    { type:"hbsTagEnd", escaped:true, stripWhitespace:false },
+    { type:"hbsTagStart" },
+    { type:"hbsExpression", parts:["tag"], params:[] },
+    { type:"hbsTagEnd" },
     { type:"htmlTagNameEnd" },
-    { type:"text", text:"value" },
+    
+    { type:"text", text:" value " },
+    
+    { type:"hbsTagStart", notEscaped:true },
+    { type:"hbsExpression", parts:["value"], params:[] },
+    { type:"hbsTagEnd", notEscaped:true, stripWhitespace:true },
+    
     { type:"htmlTagStart", closing:true },
     { type:"htmlTagNameStart" },
-    { type:"hbsTagStart", escaped:false, stripWhitespace:true, block:false, closing:true, comment:false },
-    { type:"hbsExpression", parts:["tag"] },
-    { type:"hbsTagEnd", escaped:false, stripWhitespace:true },
+    { type:"text", text:"tag" },
     { type:"htmlTagNameEnd" },
     { type:"htmlTagEnd" }
 ]
@@ -39,14 +43,13 @@ As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf
 
 
 ## Roadmap Features
-* add support for inverse expressions, sub-expressions, whitespace control
+* add support for inverse expressions, sub-expressions
 * `options.collapseWhitespace` (except on `<pre>` tags) to lighten file size and improve runtime performance
-* `options.ignoreHtmlComments` to omit html comments from compiling
-* `options.mustacheOnly` that disables helpers
+* `options.mustacheOnly` that disables helpers, expressions and whitespace control
 
 
 ## Changelog
-* 0.0.1–0.0.5 pre-releases
+* 0.0.1–0.0.6 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg
