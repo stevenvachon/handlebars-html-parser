@@ -9,7 +9,35 @@ var handlebars = require("handlebars");
 
 describe("stringifyProgram", function()
 {
-	it("should work", function(done)
+	it("should support blocks", function(done)
+	{
+		var hbs = "{{#path}} content {{/path}}";
+		hbs = handlebars.parse(hbs);
+		
+		hbs = stringifyProgram(hbs);
+		
+		expect(hbs).to.equal("{{alias0}}");
+		
+		done();
+	});
+	
+	
+	
+	it("should support whitespace control", function(done)
+	{
+		var hbs = "{{path~}} content {{~path}}";
+		hbs = handlebars.parse(hbs);
+		
+		hbs = stringifyProgram(hbs);
+		
+		expect(hbs).to.equal("{{alias0}} content {{alias2}}");
+		
+		done();
+	});
+	
+	
+	
+	it("should support everything in one template", function(done)
 	{
 		var hbs = __dirname + "/templates/test.hbs";
 		hbs = fs.readFileSync(hbs, {encoding:"utf8"});

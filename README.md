@@ -12,15 +12,16 @@ into this:
     { type:"htmlTagStart" },
     { type:"htmlTagNameStart" },
     { type:"hbsTagStart" },
-    { type:"hbsExpression", parts:["tag"], params:[] },
+    { type:"hbsExpression", path:"tag", params:[] },
     { type:"hbsTagEnd" },
     { type:"htmlTagNameEnd" },
+    { type:"htmlTagEnd" },
     
     { type:"text", text:" value " },
     
     { type:"hbsTagStart", notEscaped:true },
-    { type:"hbsExpression", parts:["value"], params:[] },
-    { type:"hbsTagEnd", notEscaped:true, stripWhitespace:true },
+    { type:"hbsExpression", path:"value", params:[] },
+    { type:"hbsTagEnd", stripWhitespace:true, notEscaped:true },
     
     { type:"htmlTagStart", closing:true },
     { type:"htmlTagNameStart" },
@@ -49,7 +50,7 @@ As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf
 
 
 ## Changelog
-* 0.0.1–0.0.6 pre-releases
+* 0.0.1–0.0.7 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg
