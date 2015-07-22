@@ -4,7 +4,7 @@
 
 Parse this:
 ```handlebars
-<{{tag}}> value {{{value~}}} </tag>
+<{{tag}}> value {{{obj.value~}}} </tag>
 ```
 into this:
 ```js
@@ -12,7 +12,9 @@ into this:
     { type:"htmlTagStart" },
     { type:"htmlTagNameStart" },
     { type:"hbsTagStart" },
-    { type:"hbsExpression", path:"tag", params:[] },
+    { type:"hbsExpressionStart" },
+    { type:"hbsExpressionPath", value:["tag"] },
+    { type:"hbsExpressionEnd" },
     { type:"hbsTagEnd" },
     { type:"htmlTagNameEnd" },
     { type:"htmlTagEnd" },
@@ -20,8 +22,12 @@ into this:
     { type:"text", text:" value " },
     
     { type:"hbsTagStart", notEscaped:true },
-    { type:"hbsExpression", path:"value", params:[] },
+    { type:"hbsExpressionStart" },
+    { type:"hbsExpressionPath", value:["obj","value"] },
+    { type:"hbsExpressionEnd" },
     { type:"hbsTagEnd", stripWhitespace:true, notEscaped:true },
+    
+    // whitespace stripped
     
     { type:"htmlTagStart", closing:true },
     { type:"htmlTagNameStart" },
@@ -35,22 +41,45 @@ into this:
 For more information on the strengths, weaknesses and implementation details of this library, check out the [wiki](https://github.com/stevenvachon/handlebars-html-parser/wiki).
 
 
+## Options
+
+### options.collapseWhitespace
+Type: `Boolean`  
+Default value: `false`  
+When `true`, will replace standard whitespace (line breaks, tabs, regular spaces) with a single space. This helps lower compiled template file size and improve runtime performance.
+
+* Does not affect "special" whitespace chars such as `&nbsp;`, etc.
+* Does not affect text within `<pre>`,`<script>`,`<style>` tags
+* Does not affect HTML's rendered appearance
+
+### options.ignoreHbsComments
+Type: `Boolean`  
+Default value: `false`  
+When `true`, Handlebars comments will be excluded from output.
+
+### options.ignoreHtmlComments
+Type: `Boolean`  
+Default value: `false`  
+When `true`, HTML comments will be excluded from output.
+
+
 ## FAQ
 1. **How is this different from [HTMLBars](https://github.com/tildeio/htmlbars)?**  
-HTMLBars *builds* a DOM whereas this library *allows* you to build a DOM and even a virtual DOM.
+HTMLBars *builds* a DOM whereas this library *allows* you to build a DOM and especially a virtual DOM.
 
 2. **Why not use [parse5](https://npmjs.com/package/parse5)?**  
 As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf</{{tag}}>` as text instead of HTML.
 
 
 ## Roadmap Features
-* add support for inverse expressions, sub-expressions
-* `options.collapseWhitespace` (except on `<pre>` tags) to lighten file size and improve runtime performance
-* `options.mustacheOnly` that disables helpers, expressions and whitespace control
+* add support for sub-expressions
+* add support for `{{#if}}`,`{{else}}`,`{{else if}}`,`{{#unless}}`
+* add support for `{{#with}}`,`{{#each}}`,`{{@index}}`,`{{@key}}`,`{{this}}`,`{{.}}`,`{{undefined}}`,`{{null}}`,`{{true}}`,`{{1}}`
+* `options.mustacheOnly` that disables helpers, expressions and whitespace control? would have to provide parse errors
 
 
 ## Changelog
-* 0.0.1–0.0.7 pre-releases
+* 0.0.1–0.0.8 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg

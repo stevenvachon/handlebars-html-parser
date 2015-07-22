@@ -9,51 +9,120 @@ var handlebars = require("handlebars");
 
 describe("stringifyProgram", function()
 {
-	it("should support blocks", function(done)
+	describe("comments", function()
 	{
-		var hbs = "{{#path}} content {{/path}}";
-		hbs = handlebars.parse(hbs);
-		
-		hbs = stringifyProgram(hbs);
-		
-		expect(hbs).to.equal("{{alias0}}");
-		
-		done();
+		it("should be aliased", function(done)
+		{
+			var hbs = "{{! comment }} content {{!-- comment --}}";
+			hbs = handlebars.parse(hbs);
+			
+			hbs = stringifyProgram(hbs);
+			
+			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
+			
+			done();
+		});
 	});
 	
 	
 	
-	it("should support whitespace control", function(done)
+	describe("non-blocks", function()
 	{
-		var hbs = "{{path~}} content {{~path}}";
-		hbs = handlebars.parse(hbs);
+		it("should be aliased", function(done)
+		{
+			var hbs = "{{path}} content {{path}}";
+			hbs = handlebars.parse(hbs);
+			
+			hbs = stringifyProgram(hbs);
+			
+			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
+			
+			done();
+		});
 		
-		hbs = stringifyProgram(hbs);
 		
-		expect(hbs).to.equal("{{alias0}} content {{alias2}}");
 		
-		done();
+		it("should support dot-separations", function(done)
+		{
+			var hbs = "{{path.path}} content {{path.path}}";
+			hbs = handlebars.parse(hbs);
+			
+			hbs = stringifyProgram(hbs);
+			
+			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
+			
+			done();
+		});
+		
+		
+		
+		it("should support whitespace-control", function(done)
+		{
+			var hbs = "{{path~}} content {{~path}}";
+			hbs = handlebars.parse(hbs);
+			
+			hbs = stringifyProgram(hbs);
+			
+			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
+			
+			done();
+		});
 	});
 	
 	
 	
-	it("should support everything in one template", function(done)
+	describe("blocks", function()
 	{
-		var hbs = __dirname + "/templates/test.hbs";
-		hbs = fs.readFileSync(hbs, {encoding:"utf8"});
-		hbs = handlebars.parse(hbs);
+		it("should be aliased", function(done)
+		{
+			var hbs = "{{#path}} content {{/path}}";
+			hbs = handlebars.parse(hbs);
+			
+			hbs = stringifyProgram(hbs);
+			
+			expect(hbs).to.equal("{{alias0}}");
+			
+			done();
+		});
 		
-		hbs = stringifyProgram(hbs);
 		
-		var expectedResult = '';
-		expectedResult += '<{{alias1}} {{alias3}} attr="{{alias5}}" attr{{alias7}}="asdf" {{alias9}}>\n';
-		expectedResult += '	{{alias11}} {{alias13}}\n';
-		expectedResult += '	<!-- comment -->\n';
-		expectedResult += '	value1\n';
-		expectedResult += '</{{alias15}}>\n';
 		
-		expect(hbs).to.equal(expectedResult);
-		
-		done();
+		it("should alias inverse blocks", function(done)
+		{
+			var hbs = "{{^path}} content {{/path}}";
+			hbs = handlebars.parse(hbs);
+			
+			hbs = stringifyProgram(hbs);
+			
+			expect(hbs).to.equal("{{alias0}}");
+			
+			done();
+		});
+	});
+	
+	
+	
+	describe("more complex templates", function()
+	{
+		// TODO :: just run this test?
+		it("should support everything in one template", function(done)
+		{
+			var hbs = __dirname + "/templates/test.hbs";
+			hbs = fs.readFileSync(hbs, {encoding:"utf8"});
+			hbs = handlebars.parse(hbs);
+			
+			hbs = stringifyProgram(hbs);
+			
+			var expectedResult = '';
+			expectedResult += '<{{alias1}} {{alias3}} attr="{{alias5}}" attr{{alias7}}="asdf" {{alias9}}>\n';
+			expectedResult += '	{{alias11}} {{alias13}}\n';
+			expectedResult += '	<!-- comment -->\n';
+			expectedResult += '	value1\n';
+			expectedResult += '</{{alias15}}>\n';
+			
+			expect(hbs).to.equal(expectedResult);
+			
+			done();
+		});
 	});
 });
