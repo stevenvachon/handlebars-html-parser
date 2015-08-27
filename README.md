@@ -43,15 +43,6 @@ For more information on the strengths, weaknesses and implementation details of 
 
 ## Options
 
-### options.collapseWhitespace
-Type: `Boolean`  
-Default value: `false`  
-When `true`, will replace standard whitespace (line breaks, tabs, regular spaces) with a single space. This helps lower compiled template file size and improve runtime performance.
-
-* Does not affect "special" whitespace chars such as `&nbsp;`, etc.
-* Does not affect text within `<pre>`,`<script>`,`<style>` tags
-* Does not affect HTML's rendered appearance
-
 ### options.ignoreHbsComments
 Type: `Boolean`  
 Default value: `false`  
@@ -61,6 +52,15 @@ When `true`, Handlebars comments will be excluded from output.
 Type: `Boolean`  
 Default value: `false`  
 When `true`, HTML comments will be excluded from output.
+
+### options.normalizeWhitespace
+Type: `Boolean`  
+Default value: `false`  
+When `true`, will replace standard whitespace (line breaks, tabs, regular spaces) with a single space. This helps lower compiled template file size and improve runtime performance.
+
+* Does not affect "special" whitespace chars such as `&nbsp;`, etc.
+* Does not affect text within `<pre>`,`<script>`,`<style>` tags
+* Does not affect HTML's rendered appearance
 
 
 ## FAQ
@@ -75,11 +75,12 @@ As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf
 * add support for sub-expressions
 * add support for `{{#if}}`,`{{else}}`,`{{else if}}`,`{{#unless}}`
 * add support for `{{#with}}`,`{{#each}}`,`{{@index}}`,`{{@key}}`,`{{this}}`,`{{.}}`,`{{undefined}}`,`{{null}}`,`{{true}}`,`{{1}}`
+* add support for `{{> partial}}`
 * `options.mustacheOnly` that disables helpers, expressions and whitespace control? would have to provide parse errors
 
 
 ## Changelog
-* 0.0.1–0.0.8 pre-releases
+* 0.0.1–0.0.9 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg

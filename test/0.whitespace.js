@@ -6,13 +6,13 @@ var fs = require("fs");
 
 
 
-describe("whitespace.collapse", function()
+describe("whitespace.normalize", function()
 {
 	it("should work", function(done)
 	{
-		expect( whitespace.collapse("\n\r\t asdf   \n  \t  asdf") ).to.equal(" asdf asdf");
+		expect( whitespace.normalize("\n\r\t asdf   \n  \t  asdf") ).to.equal(" asdf asdf");
 		
-		expect( whitespace.collapse(" \xA0 \uFEFF \u200B asdf") ).to.equal(" \xA0 \uFEFF \u200B asdf");
+		expect( whitespace.normalize(" \xA0 \uFEFF \u200B asdf") ).to.equal(" \xA0 \uFEFF \u200B asdf");
 		
 		done();
 	});
