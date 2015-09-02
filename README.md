@@ -56,7 +56,7 @@ When `true`, HTML comments will be excluded from output.
 ### options.normalizeWhitespace
 Type: `Boolean`  
 Default value: `false`  
-When `true`, will replace standard whitespace (line breaks, tabs, regular spaces) with a single space. This helps lower compiled template file size and improve runtime performance.
+When `true`, will replace multiple standard whitespace characters (line breaks, tabs, regular spaces) with a single space. This helps lower compiled template file size and improve runtime performance.
 
 * Does not affect "special" whitespace chars such as `&nbsp;`, etc.
 * Does not affect text within `<pre>`,`<script>`,`<style>` tags
@@ -80,7 +80,7 @@ As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf
 
 
 ## Changelog
-* 0.0.1–0.0.9 pre-releases
+* 0.0.1–0.0.10 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg
