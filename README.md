@@ -19,7 +19,7 @@ into this:
     { type:"htmlTagNameEnd" },
     { type:"htmlTagEnd" },
     
-    { type:"text", text:" value " },
+    { type:"text", value:" value " },
     
     { type:"hbsTagStart", notEscaped:true },
     { type:"hbsExpressionStart" },
@@ -31,7 +31,7 @@ into this:
     
     { type:"htmlTagStart", closing:true },
     { type:"htmlTagNameStart" },
-    { type:"text", text:"tag" },
+    { type:"text", value:"tag" },
     { type:"htmlTagNameEnd" },
     { type:"htmlTagEnd" }
 ]
@@ -46,12 +46,12 @@ For more information on the strengths, weaknesses and implementation details of 
 ### options.ignoreHbsComments
 Type: `Boolean`  
 Default value: `false`  
-When `true`, Handlebars comments will be excluded from output.
+When `true`, Handlebars comments will be excluded from output. This can result in concatenated Strings, which optimizes compilation.
 
 ### options.ignoreHtmlComments
 Type: `Boolean`  
 Default value: `false`  
-When `true`, HTML comments will be excluded from output.
+When `true`, HTML comments will be excluded from output. This can result in concatenated Strings, which optimizes compilation.
 
 ### options.normalizeWhitespace
 Type: `Boolean`  
@@ -62,12 +62,17 @@ When `true`, will replace multiple standard whitespace characters (line breaks, 
 * Does not affect text within `<pre>`,`<script>`,`<style>` tags
 * Does not affect HTML's rendered appearance
 
+### options.xmlMode
+Type: `Boolean`  
+Default value: `false`  
+When `true`, XML rules will be used instead of HTML rules for parsing. This can be useful for SVG documents (that are not inlined within HTML).
+
 
 ## FAQ
-1. **How is this different from [HTMLBars](https://github.com/tildeio/htmlbars)?**  
+1. **How is this different from [HTMLBars](https://npmjs.com/htmlbars)?**  
 HTMLBars *builds* a DOM whereas this library *allows* you to build a DOM and especially a virtual DOM.
 
-2. **Why not use [parse5](https://npmjs.com/package/parse5)?**  
+2. **Why not use [parse5](https://npmjs.com/parse5)?**  
 As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf</{{tag}}>` as text instead of HTML.
 
 
@@ -76,11 +81,12 @@ As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf
 * add support for `{{#if}}`,`{{else}}`,`{{else if}}`,`{{#unless}}`
 * add support for `{{#with}}`,`{{#each}}`,`{{@index}}`,`{{@key}}`,`{{this}}`,`{{.}}`,`{{undefined}}`,`{{null}}`,`{{true}}`,`{{1}}`
 * add support for `{{> partial}}`
+* `options.convertHbsComments` for converting Handlebars comments to HTML comments
 * `options.mustacheOnly` that disables helpers, expressions and whitespace control? would have to provide parse errors
 
 
 ## Changelog
-* 0.0.1–0.0.10 pre-releases
+* 0.0.1–0.0.11 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg

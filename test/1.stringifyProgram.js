@@ -7,7 +7,7 @@ var handlebars = require("handlebars");
 
 
 
-describe("stringifyProgram", function()
+describe("stringifyProgram()", function()
 {
 	describe("comments", function()
 	{

@@ -8,13 +8,12 @@ var handlebars = require("handlebars");
 
 
 
-describe("splitAliases", function()
+describe("splitAliases()", function()
 {
 	it("should support aliases in the middle of the string", function(done)
 	{
 		var hbs = "string{{alias0}}string{{alias1}}string";
 		hbs = splitAliases(hbs);
-		console.log(hbs)
 		
 		expect(hbs).to.deep.equal(["string",0,"string",1,"string"]);
 		done();

@@ -6,7 +6,7 @@ var fs = require("fs");
 
 
 
-describe("whitespace.normalize", function()
+describe("whitespace.normalize()", function()
 {
 	it("should work", function(done)
 	{
@@ -20,7 +20,7 @@ describe("whitespace.normalize", function()
 
 
 
-describe("whitespace.trimLeft", function()
+describe("whitespace.trimLeft()", function()
 {
 	it("should work", function(done)
 	{
@@ -32,7 +32,7 @@ describe("whitespace.trimLeft", function()
 
 
 
-describe("whitespace.trimRight", function()
+describe("whitespace.trimRight()", function()
 {
 	it("should work", function(done)
 	{
