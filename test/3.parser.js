@@ -525,4 +525,44 @@ describe("parser.parse()", function()
 			done();
 		});
 	});
+	
+	
+	
+	describe("options", function()
+	{
+		it("convertHbsComments = true", function(done)
+		{
+			var result = new parser({ convertHbsComments:true }).parse("{{! comment }} content {{!-- comment --}}");
+			
+			expect(result).to.deep.equal(
+			[
+				{ type:"htmlCommentStart" },
+				{ type:"text", value:" comment " },
+				{ type:"htmlCommentEnd" },
+				
+				{ type:"text", value:" content " },
+				
+				{ type:"htmlCommentStart" },
+				{ type:"text", value:" comment " },
+				{ type:"htmlCommentEnd" },
+			]);
+			
+			done();
+		});
+		
+		
+		
+		// TODO :: move to `.each()`
+		it("normalizeWhitespace = true", function(done)
+		{
+			var result = new parser({ normalizeWhitespace:true }).parse("text©&copy; &nbsp;  ");
+			
+			expect(result).to.deep.equal(
+			[
+				{ type:"text", value:"text©©   " },
+			]);
+			
+			done();
+		});
+	});
 });

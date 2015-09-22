@@ -43,6 +43,17 @@ describe("splitAliases()", function()
 	
 	
 	
+	it("should ignore expressions with no \"alias#\"", function(done)
+	{
+		var hbs = "string{{alias0}}string{{alias1a}}string{{alias#}}string{{alias}}string";
+		hbs = splitAliases(hbs);
+		
+		expect(hbs).to.deep.equal(["string",0,"string{{alias1a}}string{{alias#}}string{{alias}}string"]);
+		done();
+	});
+	
+	
+	
 	it("should support no aliases", function(done)
 	{
 		var hbs = "string{string}string{{string}}string{{string0}}string{{{string}}}";

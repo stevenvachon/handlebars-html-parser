@@ -43,6 +43,11 @@ For more information on the strengths, weaknesses and implementation details of 
 
 ## Options
 
+### options.convertHbsComments
+Type: `Boolean`  
+Default value: `false`  
+When `true`, Handlebars comments will be converted to HTML comments.
+
 ### options.ignoreHbsComments
 Type: `Boolean`  
 Default value: `false`  
@@ -60,7 +65,8 @@ When `true`, will replace multiple standard whitespace characters (line breaks, 
 
 * Does not affect "special" whitespace chars such as `&nbsp;`, etc.
 * Does not affect text within `<pre>`,`<script>`,`<style>` tags
-* Does not affect HTML's rendered appearance
+* Does not affect text within "dynamic" tags (`<{{tag}}>`)
+* Does not affect HTML's rendered appearance (unless using CSS `white-space:pre`)
 
 ### options.xmlMode
 Type: `Boolean`  
@@ -81,12 +87,11 @@ As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf
 * add support for `{{#if}}`,`{{else}}`,`{{else if}}`,`{{#unless}}`
 * add support for `{{#with}}`,`{{#each}}`,`{{@index}}`,`{{@key}}`,`{{this}}`,`{{.}}`,`{{undefined}}`,`{{null}}`,`{{true}}`,`{{1}}`
 * add support for `{{> partial}}`
-* `options.convertHbsComments` for converting Handlebars comments to HTML comments
 * `options.mustacheOnly` that disables helpers, expressions and whitespace control? would have to provide parse errors
 
 
 ## Changelog
-* 0.0.1–0.0.11 pre-releases
+* 0.0.1–0.0.12 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg

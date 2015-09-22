@@ -1,7 +1,7 @@
 {
   "name": "handlebars-html-parser",
   "description": "Parse Handlebars and HTML.",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "license": "MIT",
   "homepage": "https://github.com/stevenvachon/handlebars-html-parser",
   "author": {
@@ -33,7 +33,8 @@
     "test": "mocha test/ --reporter spec --check-leaks --bail --no-exit"
   },
   "files": [
-    "lib"
+    "lib",
+    "license"
   ],
   "keywords": [
     "handlebars",
