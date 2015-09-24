@@ -1,6 +1,5 @@
 "use strict";
-var splitAliases     = require("../lib/splitAliases");
-var stringifyProgram = require("../lib/stringifyProgram");
+var aliases = require("../lib/parse/aliases");
 
 var expect = require("chai").expect;
 var fs = require("fs");
@@ -8,12 +7,12 @@ var handlebars = require("handlebars");
 
 
 
-describe("splitAliases()", function()
+describe("aliases.split()", function()
 {
 	it("should support aliases in the middle of the string", function(done)
 	{
 		var hbs = "string{{alias0}}string{{alias1}}string";
-		hbs = splitAliases(hbs);
+		hbs = aliases.split(hbs);
 		
 		expect(hbs).to.deep.equal(["string",0,"string",1,"string"]);
 		done();
@@ -24,7 +23,7 @@ describe("splitAliases()", function()
 	it("should support aliases at the beginning/end of the string", function(done)
 	{
 		var hbs = "{{alias0}}string{{alias1}}";
-		hbs = splitAliases(hbs);
+		hbs = aliases.split(hbs);
 		
 		expect(hbs).to.deep.equal([0,"string",1]);
 		done();
@@ -35,7 +34,7 @@ describe("splitAliases()", function()
 	it("should ignore {'s and {{{'s", function(done)
 	{
 		var hbs = "string{{alias0}}string{{alias1}}string{string}string{{{string}}}";
-		hbs = splitAliases(hbs);
+		hbs = aliases.split(hbs);
 		
 		expect(hbs).to.deep.equal(["string",0,"string",1,"string{string}string{{{string}}}"]);
 		done();
@@ -46,7 +45,7 @@ describe("splitAliases()", function()
 	it("should ignore expressions with no \"alias#\"", function(done)
 	{
 		var hbs = "string{{alias0}}string{{alias1a}}string{{alias#}}string{{alias}}string";
-		hbs = splitAliases(hbs);
+		hbs = aliases.split(hbs);
 		
 		expect(hbs).to.deep.equal(["string",0,"string{{alias1a}}string{{alias#}}string{{alias}}string"]);
 		done();
@@ -57,7 +56,7 @@ describe("splitAliases()", function()
 	it("should support no aliases", function(done)
 	{
 		var hbs = "string{string}string{{string}}string{{string0}}string{{{string}}}";
-		hbs = splitAliases(hbs);
+		hbs = aliases.split(hbs);
 		
 		expect(hbs).to.deep.equal(["string{string}string{{string}}string{{string0}}string{{{string}}}"]);
 		done();
@@ -70,9 +69,9 @@ describe("splitAliases()", function()
 		var hbs = __dirname + "/templates/test.hbs";
 		hbs = fs.readFileSync(hbs, {encoding:"utf8"});
 		hbs = handlebars.parse(hbs);
-		hbs = stringifyProgram(hbs);
+		hbs = aliases.stringify(hbs);
 		
-		hbs = splitAliases(hbs);
+		hbs = aliases.split(hbs);
 		
 		expect(hbs).to.deep.equal(
 		[

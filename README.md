@@ -41,6 +41,38 @@ into this:
 For more information on the strengths, weaknesses and implementation details of this library, check out the [wiki](https://github.com/stevenvachon/handlebars-html-parser/wiki).
 
 
+## Constructor
+```js
+new HandlebarsHtmlParser(options);
+```
+
+
+## Methods
+
+### .parse(template, callback)
+Parse a template String and run a provided Function once per element in the generated linear program which contains HTML pieces and Handlebars expressions.
+
+`callback` has two arguments:
+
+* `node`, the current node being processed in the linear program
+* `state`, ~~an immutable~~ a mutable/reused object containing the current state of `node`
+
+Optionally, you can omit `callback` and use the returned value. However, you will not have access to any state.
+
+
+## Constants
+
+### .type.*
+A map of node types, especially useful with nodes in `parse()` callbacks. See the [full list](https://github.com/stevenvachon/handlebars-html-parser/blob/master/lib/NodeType.js).
+
+Example:
+```js
+if (node.type === HandlebarsHtmlParser.type.HBS_EXPRESSION_START) {
+	// is expression start node
+}
+```
+
+
 ## Options
 
 ### options.convertHbsComments
@@ -61,7 +93,7 @@ When `true`, HTML comments will be excluded from output. This can result in conc
 ### options.normalizeWhitespace
 Type: `Boolean`  
 Default value: `false`  
-When `true`, will replace multiple standard whitespace characters (line breaks, tabs, regular spaces) with a single space. This helps lower compiled template file size and improve runtime performance.
+When `true`, will replace multiple standard whitespace characters (line breaks, tabs, regular spaces) with a single space. This helps improve runtime performance and lower compiled template file size.
 
 * Does not affect "special" whitespace chars such as `&nbsp;`, etc.
 * Does not affect text within `<pre>`,`<script>`,`<style>` tags
@@ -91,7 +123,7 @@ As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf
 
 
 ## Changelog
-* 0.0.1–0.0.12 pre-releases
+* 0.0.1–0.0.13 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg

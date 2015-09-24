@@ -1,21 +1,21 @@
 "use strict";
-//var devlog = require("../lib/devlog");
-var parser = require("../lib");
+//var devlog  = require("../lib/parse/devlog");
+var options = require("../lib/options");
+var parse   = require("../lib/parse");
 
 var expect = require("chai").expect;
 var fs = require("fs");
 
 
 
-// TODO :: find way to test parseHtml() independently
-describe("parser.parse()", function()
+describe("parse()", function()
 {
 	describe("comments", function()
 	{
 		// TODO :: test {{#! block comment? }}, {{^! inverse comment? }} and {{{! comment }}}
 		it("should be supported", function(done)
 		{
-			var result = new parser().parse("{{! comment }} content {{!-- comment --}}");
+			var result = parse("{{! comment }} content {{!-- comment --}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -41,7 +41,7 @@ describe("parser.parse()", function()
 		// TODO :: test {{undefined}}, {{null}}, {{true}}, {{1}}
 		it("should be supported", function(done)
 		{
-			var result = new parser().parse("{{path}} content {{path}}");
+			var result = parse("{{path}} content {{path}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -67,7 +67,7 @@ describe("parser.parse()", function()
 		
 		it("should support dot-segmented paths", function(done)
 		{
-			var result = new parser().parse("{{path.path}} content {{../parentPath}}");
+			var result = parse("{{path.path}} content {{../parentPath}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -93,7 +93,7 @@ describe("parser.parse()", function()
 		
 		it("should support standard parameters", function(done)
 		{
-			var result = new parser().parse("{{path 'param0' path.param1}} content {{path 'param0' path.param1}}");
+			var result = parse("{{path 'param0' path.param1}} content {{path 'param0' path.param1}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -123,7 +123,7 @@ describe("parser.parse()", function()
 		
 		it.skip("should support sub-expression parameters", function(done)
 		{
-			var result = new parser().parse("{{path (path 'param0')}} content {{path (path 'param0')}}");
+			var result = parse("{{path (path 'param0')}} content {{path (path 'param0')}}", options());
 			
 			/*expect(result).to.deep.equal(
 			[
@@ -159,7 +159,7 @@ describe("parser.parse()", function()
 		
 		it("should support hash parameters", function(done)
 		{
-			var result = new parser().parse("{{path param0=path.path param1='string'}} content {{path param0=path.path param1='string'}}");
+			var result = parse("{{path param0=path.path param1='string'}} content {{path param0=path.path param1='string'}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -189,7 +189,7 @@ describe("parser.parse()", function()
 		
 		it("should support standard and hash parameters", function(done)
 		{
-			var result = new parser().parse("{{path 'param0' path.param1 param2=path.path param3='string'}} content {{path 'param0' path.param1 param2=path.path param3='string'}}");
+			var result = parse("{{path 'param0' path.param1 param2=path.path param3='string'}} content {{path 'param0' path.param1 param2=path.path param3='string'}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -223,7 +223,7 @@ describe("parser.parse()", function()
 		
 		it("should support non-escape", function(done)
 		{
-			var result = new parser().parse("{{{path}}} content {{{path}}}");
+			var result = parse("{{{path}}} content {{{path}}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -249,7 +249,7 @@ describe("parser.parse()", function()
 		
 		it("should support whitespace control", function(done)
 		{
-			var result = new parser().parse("{{path~}} content {{~path}}");
+			var result = parse("{{path~}} content {{~path}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -278,7 +278,7 @@ describe("parser.parse()", function()
 	{
 		it("should be supported", function(done)
 		{
-			var result = new parser().parse("{{#path}} content {{/path}}");
+			var result = parse("{{#path}} content {{/path}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -304,7 +304,7 @@ describe("parser.parse()", function()
 		
 		it("should support dot-segmented paths", function(done)
 		{
-			var result = new parser().parse("{{#path.path}} content {{/path.path}}");
+			var result = parse("{{#path.path}} content {{/path.path}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -330,7 +330,7 @@ describe("parser.parse()", function()
 		
 		it("should support standard parameters", function(done)
 		{
-			var result = new parser().parse("{{#path 'param0' path.param1}} content {{/path}}");
+			var result = parse("{{#path 'param0' path.param1}} content {{/path}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -358,7 +358,7 @@ describe("parser.parse()", function()
 		
 		it("should support hash parameters", function(done)
 		{
-			var result = new parser().parse("{{#path param0=path.path param1='string'}} content {{/path}}");
+			var result = parse("{{#path param0=path.path param1='string'}} content {{/path}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -386,7 +386,7 @@ describe("parser.parse()", function()
 		
 		it("should support standard and hash parameters", function(done)
 		{
-			var result = new parser().parse("{{#path 'param0' path.param1 param2=path.path param3='string'}} content {{/path}}");
+			var result = parse("{{#path 'param0' path.param1 param2=path.path param3='string'}} content {{/path}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -419,7 +419,7 @@ describe("parser.parse()", function()
 		{
 			var result = function()
 			{
-				new parser().parse("{{{#path param0 param1}}} content {{{/path}}}");
+				parse("{{{#path param0 param1}}} content {{{/path}}}", options());
 			};
 			
 			expect(result).to.throw(Error);
@@ -435,7 +435,7 @@ describe("parser.parse()", function()
 			//console.log( require("handlebars").compile("{{^path}} content {{/path}}")({path:false}) );
 			//console.log( require("handlebars").parse("{{#path~}} content {{~/path}}").body[0] );
 			
-			var result = new parser().parse("{{#path~}} content {{~/path}}");
+			var result = parse("{{#path~}} content {{~/path}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -461,7 +461,7 @@ describe("parser.parse()", function()
 		
 		it("should support inverse", function(done)
 		{
-			var result = new parser().parse("{{^path}} content {{/path}}");
+			var result = parse("{{^path}} content {{/path}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -487,7 +487,7 @@ describe("parser.parse()", function()
 		
 		it("should support inverse with whitespace control", function(done)
 		{
-			var result = new parser().parse("{{^path~}} content {{~/path}}");
+			var result = parse("{{^path~}} content {{~/path}}", options());
 			
 			expect(result).to.deep.equal(
 			[
@@ -532,7 +532,7 @@ describe("parser.parse()", function()
 	{
 		it("convertHbsComments = true", function(done)
 		{
-			var result = new parser({ convertHbsComments:true }).parse("{{! comment }} content {{!-- comment --}}");
+			var result = parse("{{! comment }} content {{!-- comment --}}", options({ convertHbsComments:true }));
 			
 			expect(result).to.deep.equal(
 			[
@@ -555,7 +555,7 @@ describe("parser.parse()", function()
 		// TODO :: move to `.each()`
 		it("normalizeWhitespace = true", function(done)
 		{
-			var result = new parser({ normalizeWhitespace:true }).parse("text©&copy; &nbsp;  ");
+			var result = parse("text©&copy; &nbsp;  ", options({ normalizeWhitespace:true }));
 			
 			expect(result).to.deep.equal(
 			[

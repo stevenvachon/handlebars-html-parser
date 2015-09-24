@@ -1,5 +1,5 @@
 "use strict";
-var stringifyProgram = require("../lib/stringifyProgram");
+var aliases = require("../lib/parse/aliases");
 
 var expect = require("chai").expect;
 var fs = require("fs");
@@ -7,7 +7,7 @@ var handlebars = require("handlebars");
 
 
 
-describe("stringifyProgram()", function()
+describe("aliases.stringify()", function()
 {
 	describe("comments", function()
 	{
@@ -16,7 +16,7 @@ describe("stringifyProgram()", function()
 			var hbs = "{{! comment }} content {{!-- comment --}}";
 			hbs = handlebars.parse(hbs);
 			
-			hbs = stringifyProgram(hbs);
+			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
 			
@@ -33,7 +33,7 @@ describe("stringifyProgram()", function()
 			var hbs = "{{path}} content {{path}}";
 			hbs = handlebars.parse(hbs);
 			
-			hbs = stringifyProgram(hbs);
+			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
 			
@@ -47,7 +47,7 @@ describe("stringifyProgram()", function()
 			var hbs = "{{path.path}} content {{path.path}}";
 			hbs = handlebars.parse(hbs);
 			
-			hbs = stringifyProgram(hbs);
+			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
 			
@@ -61,7 +61,7 @@ describe("stringifyProgram()", function()
 			var hbs = "{{path~}} content {{~path}}";
 			hbs = handlebars.parse(hbs);
 			
-			hbs = stringifyProgram(hbs);
+			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
 			
@@ -78,7 +78,7 @@ describe("stringifyProgram()", function()
 			var hbs = "{{#path}} content {{/path}}";
 			hbs = handlebars.parse(hbs);
 			
-			hbs = stringifyProgram(hbs);
+			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("{{alias0}}");
 			
@@ -92,7 +92,7 @@ describe("stringifyProgram()", function()
 			var hbs = "{{^path}} content {{/path}}";
 			hbs = handlebars.parse(hbs);
 			
-			hbs = stringifyProgram(hbs);
+			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("{{alias0}}");
 			
@@ -111,7 +111,7 @@ describe("stringifyProgram()", function()
 			hbs = fs.readFileSync(hbs, {encoding:"utf8"});
 			hbs = handlebars.parse(hbs);
 			
-			hbs = stringifyProgram(hbs);
+			hbs = aliases.stringify(hbs);
 			
 			var expectedResult = '';
 			expectedResult += '<{{alias1}} {{alias3}} attr="{{alias5}}" attr{{alias7}}="asdf" {{alias9}}>\n';
