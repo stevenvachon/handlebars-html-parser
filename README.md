@@ -4,18 +4,14 @@
 
 Parse this:
 ```handlebars
-<{{tag}}> value {{{obj.value~}}} </tag>
+<tag> value {{{obj.value~}}} </tag>
 ```
 into this:
 ```js
 [
     { type:"htmlTagStart" },
     { type:"htmlTagNameStart" },
-    { type:"hbsTagStart" },
-    { type:"hbsExpressionStart" },
-    { type:"hbsExpressionPath", value:["tag"] },
-    { type:"hbsExpressionEnd" },
-    { type:"hbsTagEnd" },
+    { type:"text", value:"tag" },
     { type:"htmlTagNameEnd" },
     { type:"htmlTagEnd" },
     
@@ -90,6 +86,11 @@ Type: `Boolean`
 Default value: `false`  
 When `true`, HTML comments will be excluded from output. This can result in concatenated Strings, which optimizes compilation.
 
+### options.minifyJS
+Type: `Boolean`  
+Default value: `false`  
+When `true`, the contents of JavaScript tags, attributes and `href="javascript:…"` links will be minified. **Note:** if *any* Handlebars expressions are contained within, minification will be skipped.
+
 ### options.normalizeWhitespace
 Type: `Boolean`  
 Default value: `false`  
@@ -123,7 +124,7 @@ As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf
 
 
 ## Changelog
-* 0.0.1–0.0.13 pre-releases
+* 0.0.1–0.0.14 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg
