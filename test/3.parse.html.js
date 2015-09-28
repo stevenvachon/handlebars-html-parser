@@ -3,8 +3,11 @@
 var options = require("../lib/options");
 var parse   = require("../lib/parse");
 
-var expect = require("chai").expect;
-var fs = require("fs");
+var chai = require("chai");
+//var fs = require("fs");
+
+var expect = chai.expect;
+chai.use( require("chai-as-promised") );
 
 
 
@@ -12,11 +15,11 @@ describe("parse()", function()
 {
 	describe("HTML", function()
 	{
-		it("should support a tag", function(done)
+		it("should support a tag", function()
 		{
 			var result = parse('<tag></tag>', options());
 			
-			expect(result).to.deep.equal(
+			return expect(result).to.eventually.deep.equal(
 			[
 				{ type:"htmlTagStart" },
 				{ type:"htmlTagNameStart" },
@@ -30,17 +33,15 @@ describe("parse()", function()
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
 			]);
-			
-			done();
 		});
 		
 		
 		
-		it("should support a self-closing tag", function(done)
+		it("should support a self-closing tag", function()
 		{
 			var result = parse('<tag/>', options());
 			
-			expect(result).to.deep.equal(
+			return expect(result).to.eventually.deep.equal(
 			[
 				{ type:"htmlTagStart" },
 				{ type:"htmlTagNameStart" },
@@ -54,17 +55,15 @@ describe("parse()", function()
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
 			]);
-			
-			done();
 		});
 		
 		
 		
-		it("should support an attribute", function(done)
+		it("should support an attribute", function()
 		{
 			var result = parse('<tag attr="value"></tag>', options());
 			
-			expect(result).to.deep.equal(
+			return expect(result).to.eventually.deep.equal(
 			[
 				{ type:"htmlTagStart" },
 				
@@ -89,17 +88,15 @@ describe("parse()", function()
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
 			]);
-			
-			done();
 		});
 		
 		
 		
-		it("should support an attribute with an empty value", function(done)
+		it("should support an attribute with an empty value", function()
 		{
 			var result = parse('<tag attr=""></tag>', options());
 			
-			expect(result).to.deep.equal(
+			return expect(result).to.eventually.deep.equal(
 			[
 				{ type:"htmlTagStart" },
 				
@@ -124,17 +121,15 @@ describe("parse()", function()
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
 			]);
-			
-			done();
 		});
 		
 		
 		
-		it("should support an attribute with no value", function(done)
+		it("should support an attribute with no value", function()
 		{
 			var result = parse('<tag attr></tag>', options());
 			
-			expect(result).to.deep.equal(
+			return expect(result).to.eventually.deep.equal(
 			[
 				{ type:"htmlTagStart" },
 				
@@ -159,17 +154,15 @@ describe("parse()", function()
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
 			]);
-			
-			done();
 		});
 		
 		
 		
-		it("should support attributes", function(done)
+		it("should support attributes", function()
 		{
 			var result = parse('<tag attr1="value1" attr-2="value2" attr3="" attr4></tag>', options());
 			
-			expect(result).to.deep.equal(
+			return expect(result).to.eventually.deep.equal(
 			[
 				{ type:"htmlTagStart" },
 				
@@ -221,17 +214,15 @@ describe("parse()", function()
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
 			]);
-			
-			done();
 		});
 		
 		
 		
-		it("should support text content", function(done)
+		it("should support text content", function()
 		{
 			var result = parse('<tag>text</tag>', options());
 			
-			expect(result).to.deep.equal(
+			return expect(result).to.eventually.deep.equal(
 			[
 				{ type:"htmlTagStart" },
 				{ type:"htmlTagNameStart" },
@@ -247,17 +238,15 @@ describe("parse()", function()
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
 			]);
-			
-			done();
 		});
 		
 		
 		
-		it("should support nested tags and text content", function(done)
+		it("should support nested tags and text content", function()
 		{
 			var result = parse('<tag><tag/>text<tag/></tag>', options());
 			
-			expect(result).to.deep.equal(
+			return expect(result).to.eventually.deep.equal(
 			[
 				{ type:"htmlTagStart" },
 				{ type:"htmlTagNameStart" },
@@ -295,17 +284,15 @@ describe("parse()", function()
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
 			]);
-			
-			done();
 		});	
 		
 		
 		
-		it("should support <script> tags", function(done)
+		it("should support <script> tags", function()
 		{
 			var result = parse('<script>function a(arg){ b(arg,"arg") }</script>', options());
 			
-			expect(result).to.deep.equal(
+			return expect(result).to.eventually.deep.equal(
 			[
 				{ type:"htmlTagStart" },
 				{ type:"htmlTagNameStart" },
@@ -321,17 +308,15 @@ describe("parse()", function()
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
 			]);
-			
-			done();
 		});
 		
 		
 		
-		it('should support <script type="text/javascript"> tags', function(done)
+		it('should support <script type="text/javascript"> tags', function()
 		{
 			var result = parse('<script type="text/javascript">function a(arg){ b(arg,"arg") }</script>', options());
 			
-			expect(result).to.deep.equal(
+			return expect(result).to.eventually.deep.equal(
 			[
 				{ type:"htmlTagStart" },
 				{ type:"htmlTagNameStart" },
@@ -355,17 +340,15 @@ describe("parse()", function()
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
 			]);
-			
-			done();
 		});
 		
 		
 		
-		it("should support unrecognized <script> tags", function(done)
+		it("should support unrecognized <script> tags", function()
 		{
 			var result = parse('<script type="text/not-javascript"><tag attr="value">text</tag></script>', options());
 			
-			expect(result).to.deep.equal(
+			return expect(result).to.eventually.deep.equal(
 			[
 				{ type:"htmlTagStart" },
 				{ type:"htmlTagNameStart" },
@@ -389,8 +372,6 @@ describe("parse()", function()
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
 			]);
-			
-			done();
 		});
 	});
 });

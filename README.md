@@ -51,9 +51,7 @@ Parse a template String and run a provided Function once per element in the gene
 `callback` has two arguments:
 
 * `node`, the current node being processed in the linear program
-* `state`, ~~an immutable~~ a mutable/reused object containing the current state of `node`
-
-Optionally, you can omit `callback` and use the returned value. However, you will not have access to any state.
+* `state`, a mutable/reused object containing the current state of `node`
 
 
 ## Constants
@@ -86,11 +84,6 @@ Type: `Boolean`
 Default value: `false`  
 When `true`, HTML comments will be excluded from output. This can result in concatenated Strings, which optimizes compilation.
 
-### options.minifyJS
-Type: `Boolean`  
-Default value: `false`  
-When `true`, the contents of JavaScript tags, attributes and `href="javascript:…"` links will be minified. **Note:** if *any* Handlebars expressions are contained within, minification will be skipped.
-
 ### options.normalizeWhitespace
 Type: `Boolean`  
 Default value: `false`  
@@ -100,6 +93,16 @@ When `true`, will replace multiple standard whitespace characters (line breaks, 
 * Does not affect text within `<pre>`,`<script>`,`<style>` tags
 * Does not affect text within "dynamic" tags (`<{{tag}}>`)
 * Does not affect HTML's rendered appearance (unless using CSS `white-space:pre`)
+
+### options.processCSS
+Type: `Boolean`  
+Default value: `false`  
+When `true`, the contents of CSS tags and attributes will be [auto-prefixed](https://npmjs.com/autoprefixer) and minified. **Note:** if *any* Handlebars expressions are contained within, minification will be skipped.
+
+### options.processJS
+Type: `Boolean`  
+Default value: `false`  
+When `true`, the contents of JavaScript tags, attributes and `href="javascript:…"` links will be minified. **Note:** if *any* Handlebars expressions are contained within, minification will be skipped.
 
 ### options.xmlMode
 Type: `Boolean`  
@@ -124,7 +127,7 @@ As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf
 
 
 ## Changelog
-* 0.0.1–0.0.14 pre-releases
+* 0.0.1–0.0.15 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg
