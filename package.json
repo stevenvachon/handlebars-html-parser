@@ -1,7 +1,7 @@
 {
   "name": "handlebars-html-parser",
   "description": "Parse Handlebars and HTML.",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "license": "MIT",
   "homepage": "https://github.com/stevenvachon/handlebars-html-parser",
   "author": {
@@ -20,10 +20,11 @@
   "dependencies": {
     "autoprefixer": "^6.0.3",
     "cssnano": "^3.2.0",
+    "each-series": "^1.0.0",
     "event-attributes": "^1.0.1",
     "handlebars": "^4.0.3",
-    "htmlparser2": "^3.8.3",
     "object-assign": "^4.0.1",
+    "parse5": "^1.5.0",
     "postcss": "^5.0.8",
     "uglify-js": "^2.4.24"
   },

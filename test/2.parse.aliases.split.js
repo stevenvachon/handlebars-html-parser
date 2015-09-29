@@ -11,7 +11,7 @@ describe("aliases.split()", function()
 {
 	it("should support aliases in the middle of the string", function(done)
 	{
-		var hbs = "string{{alias0}}string{{alias1}}string";
+		var hbs = "stringhandlebars-html-parser-0-aliasstringhandlebars-html-parser-1-aliasstring";
 		hbs = aliases.split(hbs);
 		
 		expect(hbs).to.deep.equal(["string",0,"string",1,"string"]);
@@ -22,7 +22,7 @@ describe("aliases.split()", function()
 	
 	it("should support aliases at the beginning/end of the string", function(done)
 	{
-		var hbs = "{{alias0}}string{{alias1}}";
+		var hbs = "handlebars-html-parser-0-aliasstringhandlebars-html-parser-1-alias";
 		hbs = aliases.split(hbs);
 		
 		expect(hbs).to.deep.equal([0,"string",1]);
@@ -31,23 +31,12 @@ describe("aliases.split()", function()
 	
 	
 	
-	it("should ignore {'s and {{{'s", function(done)
-	{
-		var hbs = "string{{alias0}}string{{alias1}}string{string}string{{{string}}}";
-		hbs = aliases.split(hbs);
-		
-		expect(hbs).to.deep.equal(["string",0,"string",1,"string{string}string{{{string}}}"]);
-		done();
-	});
-	
-	
-	
 	it("should ignore expressions with no \"alias#\"", function(done)
 	{
-		var hbs = "string{{alias0}}string{{alias1a}}string{{alias#}}string{{alias}}string";
+		var hbs = "stringhandlebars-html-parser-0-aliasstringhandlebars-html-parser-#-aliasstringhandlebars-html-parser-aliasstring";
 		hbs = aliases.split(hbs);
 		
-		expect(hbs).to.deep.equal(["string",0,"string{{alias1a}}string{{alias#}}string{{alias}}string"]);
+		expect(hbs).to.deep.equal(["string",0,"stringhandlebars-html-parser-#-aliasstringhandlebars-html-parser-aliasstring"]);
 		done();
 	});
 	
@@ -55,10 +44,10 @@ describe("aliases.split()", function()
 	
 	it("should support no aliases", function(done)
 	{
-		var hbs = "string{string}string{{string}}string{{string0}}string{{{string}}}";
+		var hbs = "stringhandlebars-html-parser-aliasstringhandlebars-html-parser-alias";
 		hbs = aliases.split(hbs);
 		
-		expect(hbs).to.deep.equal(["string{string}string{{string}}string{{string0}}string{{{string}}}"]);
+		expect(hbs).to.deep.equal(["stringhandlebars-html-parser-aliasstringhandlebars-html-parser-alias"]);
 		done();
 	});
 	

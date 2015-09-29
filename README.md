@@ -37,34 +37,58 @@ into this:
 For more information on the strengths, weaknesses and implementation details of this library, check out the [wiki](https://github.com/stevenvachon/handlebars-html-parser/wiki).
 
 
-## Constructor
+## Installation
+[Node.js](http://nodejs.org/) `>= 0.12` is required. ~~Type this at the command line:~~
+```shell
+npm install handlebars-html-parser --save-dev
+```
+
+
+## Example
 ```js
-new HandlebarsHtmlParser(options);
+var HandlebarsHtmlParser = require("handlebars-html-parser");
+var parser = new HandlebarsHtmlParser(options);
+
+parser.parse("<tag>{{var}}</tag>", function(node, state) {
+	switch(node.type) {
+		case HandlebarsHtmlParser.type.HBS_EXPRESSION_START: {
+			// is expression start node
+			break;
+		}
+		case HandlebarsHtmlParser.type.HTML_TAG_START: {
+			// is html tag start node
+			break;
+		}
+	}
+}).then( function(program) {
+	console.log("done!");
+});
 ```
 
 
 ## Methods
 
 ### .parse(template, callback)
-Parse a template String and run a provided Function once per element in the generated linear program which contains HTML pieces and Handlebars expressions.
+Parse a template String and run a provided Function once per element in the generated linear program which contains HTML pieces and Handlebars expressions. A `Promise` is returned for use in chaining.
 
 `callback` has two arguments:
 
 * `node`, the current node being processed in the linear program
 * `state`, a mutable/reused object containing the current state of `node`
 
+Optionally, you can omit `callback` and use the returned value, however, you will not have access to any state.
+
+
+## Functions
+
+### .beautifyJS(js)
+Format a JavaScript String for increased legibility. This is a convenience function that will prevent your project from depending on multiple versions of [uglify-js](https://npmjs.com/uglify-js).
+
 
 ## Constants
 
 ### .type.*
 A map of node types, especially useful with nodes in `parse()` callbacks. See the [full list](https://github.com/stevenvachon/handlebars-html-parser/blob/master/lib/NodeType.js).
-
-Example:
-```js
-if (node.type === HandlebarsHtmlParser.type.HBS_EXPRESSION_START) {
-	// is expression start node
-}
-```
 
 
 ## Options
@@ -104,30 +128,24 @@ Type: `Boolean`
 Default value: `false`  
 When `true`, the contents of JavaScript tags, attributes and `href="javascript:…"` links will be minified. **Note:** if *any* Handlebars expressions are contained within, minification will be skipped.
 
-### options.xmlMode
-Type: `Boolean`  
-Default value: `false`  
-When `true`, XML rules will be used instead of HTML rules for parsing. This can be useful for SVG documents (that are not inlined within HTML).
-
 
 ## FAQ
 1. **How is this different from [HTMLBars](https://npmjs.com/htmlbars)?**  
 HTMLBars *builds* a DOM whereas this library *allows* you to build a DOM and especially a virtual DOM.
 
-2. **Why not use [parse5](https://npmjs.com/parse5)?**  
-As of v1.5.0, it is not at all "forgiving", in that it will parse `<{{tag}}>asdf</{{tag}}>` as text instead of HTML.
-
 
 ## Roadmap Features
+* test downlevel-revealed conditional comments in IE (with the `--`) to see how they render
 * add support for sub-expressions
 * add support for `{{#if}}`,`{{else}}`,`{{else if}}`,`{{#unless}}`
 * add support for `{{#with}}`,`{{#each}}`,`{{@index}}`,`{{@key}}`,`{{this}}`,`{{.}}`,`{{undefined}}`,`{{null}}`,`{{true}}`,`{{1}}`
 * add support for `{{> partial}}`
 * `options.mustacheOnly` that disables helpers, expressions and whitespace control? would have to provide parse errors
+* `options.xmlMode` with [xmldoc](https://npmjs.com/xmldoc) ?
 
 
 ## Changelog
-* 0.0.1–0.0.15 pre-releases
+* 0.0.1–0.0.16 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg

@@ -1,5 +1,5 @@
 "use strict";
-//var devlog  = require("../lib/parse/devlog");
+//var devlog  = require("../lib/devlog");
 var options = require("../lib/options");
 var parse   = require("../lib/parse");
 
@@ -244,7 +244,7 @@ describe("parse()", function()
 		
 		it("should support nested tags and text content", function()
 		{
-			var result = parse('<tag><tag/>text<tag/></tag>', options());
+			var result = parse('<tag><tag></tag>text</tag>', options());
 			
 			return expect(result).to.eventually.deep.equal(
 			[
@@ -266,17 +266,6 @@ describe("parse()", function()
 				{ type:"htmlTagEnd" },
 				
 				{ type:"text", value:"text" },
-				
-				{ type:"htmlTagStart" },
-				{ type:"htmlTagNameStart" },
-				{ type:"text", value:"tag" },
-				{ type:"htmlTagNameEnd" },
-				{ type:"htmlTagEnd" },
-				{ type:"htmlTagStart", closing:true },
-				{ type:"htmlTagNameStart" },
-				{ type:"text", value:"tag" },
-				{ type:"htmlTagNameEnd" },
-				{ type:"htmlTagEnd" },
 				
 				{ type:"htmlTagStart", closing:true },
 				{ type:"htmlTagNameStart" },
@@ -371,6 +360,66 @@ describe("parse()", function()
 				{ type:"text", value:"script" },
 				{ type:"htmlTagNameEnd" },
 				{ type:"htmlTagEnd" }
+			]);
+		});
+		
+		
+		
+		it("should support a comment", function()
+		{
+			var result = parse('<!-- text -->', options());
+			
+			return expect(result).to.eventually.deep.equal(
+			[
+				{ type:"htmlCommentStart" },
+				{ type:"text", value:" text " },
+				{ type:"htmlCommentEnd" }
+			]);
+		});
+		
+		
+		
+		it("should support a downlevel-hidden Explorer conditional comment", function()
+		{
+			var result = parse('<!--[if lt IE 8]><![if gt IE 7]><tag>text</tag><![endif]><![endif]-->', options());
+			
+			return expect(result).to.eventually.deep.equal(
+			[
+				{ type:"htmlCommentStart" },
+				{ type:"text", value:'[if lt IE 8]><![if gt IE 7]><tag>text</tag><![endif]><![endif]' },
+				{ type:"htmlCommentEnd" }
+			]);
+		});
+		
+		
+		
+		it("should not support a downlevel-reveal Explorer conditional comment", function()
+		{
+			var result = parse('<![if lt IE 8]><tag>text</tag><![endif]>', options());
+			
+			return expect(result).to.eventually.deep.equal(
+			[
+				{ type:"htmlCommentStart" },
+				{ type:"text", value:"[if lt IE 8]" },
+				{ type:"htmlCommentEnd" },
+				
+				{ type:"htmlTagStart" },
+				{ type:"htmlTagNameStart" },
+				{ type:"text", value:"tag" },
+				{ type:"htmlTagNameEnd" },
+				{ type:"htmlTagEnd" },
+				
+				{ type:"text", value:"text" },
+				
+				{ type:"htmlTagStart", closing:true },
+				{ type:"htmlTagNameStart" },
+				{ type:"text", value:"tag" },
+				{ type:"htmlTagNameEnd" },
+				{ type:"htmlTagEnd" },
+				
+				{ type:"htmlCommentStart" },
+				{ type:"text", value:"[endif]" },
+				{ type:"htmlCommentEnd" }
 			]);
 		});
 	});

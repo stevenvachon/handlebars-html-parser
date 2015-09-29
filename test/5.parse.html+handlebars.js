@@ -1,5 +1,5 @@
 "use strict";
-var devlog  = require("../lib/parse/devlog");
+//var devlog  = require("../lib/devlog");
 var options = require("../lib/options");
 var parse   = require("../lib/parse");
 
@@ -54,7 +54,6 @@ describe("parse()", function()
 			
 			
 			
-			// TODO :: move to `.each()`?
 			describe("normalizeWhitespace = true", function()
 			{
 				it("should work", function()

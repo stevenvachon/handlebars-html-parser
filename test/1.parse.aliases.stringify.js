@@ -18,7 +18,7 @@ describe("aliases.stringify()", function()
 			
 			hbs = aliases.stringify(hbs);
 			
-			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
+			expect(hbs).to.equal("handlebars-html-parser-0-alias content handlebars-html-parser-2-alias");
 			
 			done();
 		});
@@ -35,7 +35,7 @@ describe("aliases.stringify()", function()
 			
 			hbs = aliases.stringify(hbs);
 			
-			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
+			expect(hbs).to.equal("handlebars-html-parser-0-alias content handlebars-html-parser-2-alias");
 			
 			done();
 		});
@@ -49,7 +49,7 @@ describe("aliases.stringify()", function()
 			
 			hbs = aliases.stringify(hbs);
 			
-			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
+			expect(hbs).to.equal("handlebars-html-parser-0-alias content handlebars-html-parser-2-alias");
 			
 			done();
 		});
@@ -63,7 +63,7 @@ describe("aliases.stringify()", function()
 			
 			hbs = aliases.stringify(hbs);
 			
-			expect(hbs).to.equal("{{alias0}} content {{alias2}}");
+			expect(hbs).to.equal("handlebars-html-parser-0-alias content handlebars-html-parser-2-alias");
 			
 			done();
 		});
@@ -80,7 +80,7 @@ describe("aliases.stringify()", function()
 			
 			hbs = aliases.stringify(hbs);
 			
-			expect(hbs).to.equal("{{alias0}}");
+			expect(hbs).to.equal("handlebars-html-parser-0-alias");
 			
 			done();
 		});
@@ -94,7 +94,7 @@ describe("aliases.stringify()", function()
 			
 			hbs = aliases.stringify(hbs);
 			
-			expect(hbs).to.equal("{{alias0}}");
+			expect(hbs).to.equal("handlebars-html-parser-0-alias");
 			
 			done();
 		});
@@ -114,11 +114,11 @@ describe("aliases.stringify()", function()
 			hbs = aliases.stringify(hbs);
 			
 			var expectedResult = '';
-			expectedResult += '<{{alias1}} {{alias3}} attr="{{alias5}}" attr{{alias7}}="asdf" {{alias9}}>\n';
-			expectedResult += '	{{alias11}} {{alias13}}\n';
+			expectedResult += '<handlebars-html-parser-1-alias handlebars-html-parser-3-alias attr="handlebars-html-parser-5-alias" attrhandlebars-html-parser-7-alias="asdf" handlebars-html-parser-9-alias>\n';
+			expectedResult += '	handlebars-html-parser-11-alias handlebars-html-parser-13-alias\n';
 			expectedResult += '	<!-- comment -->\n';
 			expectedResult += '	value1\n';
-			expectedResult += '</{{alias15}}>\n';
+			expectedResult += '</handlebars-html-parser-15-alias>\n';
 			
 			expect(hbs).to.equal(expectedResult);
 			
