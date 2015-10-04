@@ -9,6 +9,9 @@ var fs = require("fs");
 var expect = chai.expect;
 chai.use( require("chai-as-promised") );
 
+// postcss uses native promises (and thus, won't work on Node 0.10)
+global.Promise = require("bluebird");
+
 
 
 describe("parse()", function()

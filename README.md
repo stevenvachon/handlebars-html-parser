@@ -38,10 +38,11 @@ For more information on the strengths, weaknesses and implementation details of 
 
 
 ## Installation
-[Node.js](http://nodejs.org/) `>= 0.12` is required. ~~Type this at the command line:~~
+[Node.js](http://nodejs.org/) `>= 0.10` is required. ~~Type this at the command line:~~
 ```shell
 npm install handlebars-html-parser --save-dev
 ```
+**Note:** Node.js v0.10 will need a `Promise` polyfill (see [any-promise](https://npmjs.com/any-promise)).
 
 
 ## Example
@@ -76,7 +77,7 @@ Parse a template String and run a provided Function once per element in the gene
 * `node`, the current node being processed in the linear program
 * `state`, a mutable/reused object containing the current state of `node`
 
-Optionally, you can omit `callback` and use the returned value, however, you will not have access to any state.
+Optionally, you can omit `callback` and use the promised value, however, you will not have access to any state.
 
 
 ## Functions
@@ -145,7 +146,7 @@ HTMLBars *builds* a DOM whereas this library *allows* you to build a DOM and esp
 
 
 ## Changelog
-* 0.0.1–0.0.16 pre-releases
+* 0.0.1–0.0.17 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg
