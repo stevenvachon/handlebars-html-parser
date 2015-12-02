@@ -1,6 +1,8 @@
 "use strict";
 var aliases = require("../lib/parse/aliases");
 
+var utils = require("./utils");
+
 var expect = require("chai").expect;
 var fs = require("fs");
 var handlebars = require("handlebars");
@@ -11,7 +13,7 @@ describe("aliases.stringify()", function()
 {
 	describe("comments", function()
 	{
-		it("should be aliased", function(done)
+		it("should be aliased", function()
 		{
 			var hbs = "{{! comment }} content {{!-- comment --}}";
 			hbs = handlebars.parse(hbs);
@@ -19,8 +21,6 @@ describe("aliases.stringify()", function()
 			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("handlebars-html-parser-0-alias content handlebars-html-parser-2-alias");
-			
-			done();
 		});
 	});
 	
@@ -28,7 +28,7 @@ describe("aliases.stringify()", function()
 	
 	describe("non-blocks", function()
 	{
-		it("should be aliased", function(done)
+		it("should be aliased", function()
 		{
 			var hbs = "{{path}} content {{path}}";
 			hbs = handlebars.parse(hbs);
@@ -36,13 +36,11 @@ describe("aliases.stringify()", function()
 			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("handlebars-html-parser-0-alias content handlebars-html-parser-2-alias");
-			
-			done();
 		});
 		
 		
 		
-		it("should support dot-separations", function(done)
+		it("should support dot-separations", function()
 		{
 			var hbs = "{{path.path}} content {{path.path}}";
 			hbs = handlebars.parse(hbs);
@@ -50,13 +48,11 @@ describe("aliases.stringify()", function()
 			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("handlebars-html-parser-0-alias content handlebars-html-parser-2-alias");
-			
-			done();
 		});
 		
 		
 		
-		it("should support whitespace-control", function(done)
+		it("should support whitespace-control", function()
 		{
 			var hbs = "{{path~}} content {{~path}}";
 			hbs = handlebars.parse(hbs);
@@ -64,8 +60,6 @@ describe("aliases.stringify()", function()
 			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("handlebars-html-parser-0-alias content handlebars-html-parser-2-alias");
-			
-			done();
 		});
 	});
 	
@@ -73,7 +67,7 @@ describe("aliases.stringify()", function()
 	
 	describe("blocks", function()
 	{
-		it("should be aliased", function(done)
+		it("should be aliased", function()
 		{
 			var hbs = "{{#path}} content {{/path}}";
 			hbs = handlebars.parse(hbs);
@@ -81,13 +75,11 @@ describe("aliases.stringify()", function()
 			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("handlebars-html-parser-0-alias");
-			
-			done();
 		});
 		
 		
 		
-		it("should alias inverse blocks", function(done)
+		it("should alias inverse blocks", function()
 		{
 			var hbs = "{{^path}} content {{/path}}";
 			hbs = handlebars.parse(hbs);
@@ -95,8 +87,6 @@ describe("aliases.stringify()", function()
 			hbs = aliases.stringify(hbs);
 			
 			expect(hbs).to.equal("handlebars-html-parser-0-alias");
-			
-			done();
 		});
 	});
 	
@@ -105,7 +95,7 @@ describe("aliases.stringify()", function()
 	describe("more complex templates", function()
 	{
 		// TODO :: just run this test?
-		it("should support everything in one template", function(done)
+		it("should support everything in one template", function()
 		{
 			var hbs = __dirname + "/templates/test.hbs";
 			hbs = fs.readFileSync(hbs, {encoding:"utf8"});
@@ -121,8 +111,6 @@ describe("aliases.stringify()", function()
 			expectedResult += '</handlebars-html-parser-15-alias>\n';
 			
 			expect(hbs).to.equal(expectedResult);
-			
-			done();
 		});
 	});
 });

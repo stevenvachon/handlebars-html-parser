@@ -1,13 +1,12 @@
 "use strict";
 //var devlog  = require("../lib/devlog");
-var options = require("../lib/options");
+var options = require("../lib/parseOptions");
 var parse   = require("../lib/parse");
 
-var chai = require("chai");
-//var fs = require("fs");
+var utils = require("./utils");
 
-var expect = chai.expect;
-chai.use( require("chai-as-promised") );
+var expect = require("chai").expect;
+//var fs = require("fs");
 
 
 
@@ -17,7 +16,6 @@ describe("parse()", function()
 	{
 		describe("comments", function()
 		{
-			// TODO :: test {{#! block comment? }}, {{^! inverse comment? }} and {{{! comment }}}
 			it("should be supported", function()
 			{
 				var result = parse('{{! comment }} content {{!-- comment --}}', options());
@@ -35,13 +33,39 @@ describe("parse()", function()
 					{ type:"hbsTagEnd" }
 				]);
 			});
+			
+			
+			
+			it("should not support a \"block comment\"", function()
+			{
+				var result = parse('{{#! block comment? }}', options());
+				
+				return expect(result).to.eventually.be.rejected;
+			});
+			
+			
+			
+			it("should not support an \"inverse comment\"", function()
+			{
+				var result = parse('{{^! inverse comment? }}', options());
+				
+				return expect(result).to.eventually.be.rejected;
+			});
+			
+			
+			
+			it("should not support an \"unescaped comment\"", function()
+			{
+				var result = parse('{{{! unescaped comment? }}}', options());
+				
+				return expect(result).to.eventually.be.rejected;
+			});
 		});
 		
 		
 		
 		describe("non-blocks", function()
 		{
-			// TODO :: test {{undefined}}, {{null}}, {{true}}, {{1}}
 			it("should be supported", function()
 			{
 				var result = parse('{{path}} content {{path}}', options());
@@ -154,7 +178,12 @@ describe("parse()", function()
 			
 			it("should support hash parameters", function()
 			{
-				var result = parse('{{path param0=path.path param1="string"}} content {{path param0=path.path param1="string"}}', options());
+				var hbs = '';
+				hbs += '{{path param0=path.path param1="string"}}';
+				hbs += ' content ';
+				hbs += '{{path param0=path.path param1="string"}}';
+				
+				var result = parse(hbs, options());
 				
 				return expect(result).to.eventually.deep.equal(
 				[
@@ -182,7 +211,12 @@ describe("parse()", function()
 			
 			it("should support standard and hash parameters", function()
 			{
-				var result = parse('{{path "param0" path.param1 param2=path.path param3="string"}} content {{path "param0" path.param1 param2=path.path param3="string"}}', options());
+				var hbs = '';
+				hbs += '{{path "param0" path.param1 param2=path.path param3="string"}}';
+				hbs += ' content ';
+				hbs += '{{path "param0" path.param1 param2=path.path param3="string"}}';
+				
+				var result = parse(hbs, options());
 				
 				return expect(result).to.eventually.deep.equal(
 				[
@@ -212,13 +246,13 @@ describe("parse()", function()
 			
 			
 			
-			it("should support non-escape", function()
+			it("should support unescape", function()
 			{
 				var result = parse('{{{path}}} content {{{path}}}', options());
 				
 				return expect(result).to.eventually.deep.equal(
 				[
-					{ type:"hbsTagStart", notEscaped:true },
+					{ type:"hbsTagStart", notEscaped:true },  // TODO :: rename to `unescaped`
 					{ type:"hbsExpressionStart" },
 					{ type:"hbsExpressionPath", value:["path"] },
 					{ type:"hbsExpressionEnd" },
@@ -238,6 +272,9 @@ describe("parse()", function()
 			
 			it("should support whitespace control", function()
 			{
+				// TODO :: https://github.com/wycats/handlebars.js/issues/1181
+				//var result = parse('{{path~}} content {{{~path}}}', options());
+				
 				var result = parse('{{path~}} content {{~path}}', options());
 				
 				return expect(result).to.eventually.deep.equal(
@@ -250,11 +287,155 @@ describe("parse()", function()
 					
 					{ type:"text", value:"content" },
 					
-					{ type:"hbsTagStart", stripWhitespace:true },
+					{ type:"hbsTagStart"/*, notEscaped:true*/, stripWhitespace:true },
 					{ type:"hbsExpressionStart" },
 					{ type:"hbsExpressionPath", value:["path"] },
 					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" }
+					{ type:"hbsTagEnd"/*, notEscaped:true*/ }
+				]);
+			});
+			
+			
+			
+			it("should support data references", function()
+			{
+				var result = parse('{{@path}} content {{{@path}}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:["path"], data:true },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"text", value:" content " },
+					
+					{ type:"hbsTagStart", notEscaped:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:["path"], data:true },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", notEscaped:true }
+				]);
+			});
+			
+			
+			
+			it("should support undefined", function()
+			{
+				var result = parse('{{undefined}} content {{{undefined}}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:[undefined] },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"text", value:" content " },
+					
+					{ type:"hbsTagStart", notEscaped:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:[undefined] },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", notEscaped:true }
+				]);
+			});
+			
+			
+			
+			it("should support null", function()
+			{
+				var result = parse('{{null}} content {{{null}}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:[null] },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"text", value:" content " },
+					
+					{ type:"hbsTagStart", notEscaped:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:[null] },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", notEscaped:true }
+				]);
+			});
+			
+			
+			
+			it("should support booleans", function()
+			{
+				var result = parse('{{true}} content {{{false}}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:[true] },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"text", value:" content " },
+					
+					{ type:"hbsTagStart", notEscaped:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:[false] },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", notEscaped:true }
+				]);
+			});
+			
+			
+			
+			it("should support integers", function()
+			{
+				var result = parse('{{1}} content {{{1}}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:[1] },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"text", value:" content " },
+					
+					{ type:"hbsTagStart", notEscaped:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:[1] },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", notEscaped:true }
+				]);
+			});
+			
+			
+			
+			it("should support floats", function()
+			{
+				var result = parse('{{1.1}} content {{{1.1}}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:[1.1] },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"text", value:" content " },
+					
+					{ type:"hbsTagStart", notEscaped:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsExpressionPath", value:[1.1] },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", notEscaped:true }
 				]);
 			});
 		});
@@ -392,7 +573,7 @@ describe("parse()", function()
 			
 			
 			// TODO :: move to a "behaviors" test file -- for when/if core Handlebars changes, I'll know
-			it("should not support non-escape", function()
+			it("should not support unescape", function()
 			{
 				var result = parse("{{{#path param0 param1}}} content {{{/path}}}", options());
 				

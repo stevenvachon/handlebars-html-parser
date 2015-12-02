@@ -38,52 +38,30 @@ For more information on the strengths, weaknesses and implementation details of 
 
 
 ## Installation
-[Node.js](http://nodejs.org/) `>= 0.10` is required. ~~Type this at the command line:~~
+[Node.js](http://nodejs.org/) `>= 0.10` is required; `< 4.0` will need `Promise` and `Object.assign` polyfills. ~~Type this at the command line:~~
 ```shell
-npm install handlebars-html-parser --save-dev
-```
-**Note:** Node.js v0.10 will need a `Promise` polyfill (see [any-promise](https://npmjs.com/any-promise)).
-
-
-## Example
-```js
-var HandlebarsHtmlParser = require("handlebars-html-parser");
-var parser = new HandlebarsHtmlParser(options);
-
-parser.parse("<tag>{{var}}</tag>", function(node, state) {
-	switch(node.type) {
-		case HandlebarsHtmlParser.type.HBS_EXPRESSION_START: {
-			// is expression start node
-			break;
-		}
-		case HandlebarsHtmlParser.type.HTML_TAG_START: {
-			// is html tag start node
-			break;
-		}
-	}
-}).then( function(program) {
-	console.log("done!");
-});
+npm install handlebars-html-parser
 ```
 
 
 ## Methods
 
-### .parse(template, callback)
-Parse a template String and run a provided Function once per element in the generated linear program which contains HTML pieces and Handlebars expressions. A `Promise` is returned for use in chaining.
-
-`callback` has two arguments:
-
-* `node`, the current node being processed in the linear program
-* `state`, a mutable/reused object containing the current state of `node`
-
-Optionally, you can omit `callback` and use the promised value, however, you will not have access to any state.
+### .parse(template)
+Parse a template String into a linear program which contains HTML pieces and Handlebars expressions. A `Promise` is returned for use in chaining.
 
 
 ## Functions
 
 ### .beautifyJS(js)
 Format a JavaScript String for increased legibility. This is a convenience function that will prevent your project from depending on multiple versions of [uglify-js](https://npmjs.com/uglify-js).
+
+### .each(callback)
+Runs a provided Function once per element in the generated linear program.
+
+`callback` has two arguments:
+
+* `node`, the current node being processed in the linear program
+* `state`, a mutable/reused object containing the current state of `node`
 
 
 ## Constants
@@ -130,23 +108,49 @@ Default value: `false`
 When `true`, the contents of JavaScript tags, attributes and `href="javascript:…"` links will be minified. **Note:** if *any* Handlebars expressions are contained within, minification will be skipped.
 
 
+## Example
+```js
+var HandlebarsHtmlParser = require("handlebars-html-parser")
+
+var each = HandlebarsHtmlParser.each
+var NodeType = HandlebarsHtmlParser.type
+var parser = new HandlebarsHtmlParser(options)
+
+parser.parse("<tag>{{var}}</tag>").then( 
+	each( function(node, state) {
+		switch(node.type) {
+			case NodeType.HBS_EXPRESSION_START: {
+				// is expression start node
+				break
+			}
+			case NodeType.HTML_TAG_START: {
+				// is html tag start node
+				break
+			}
+		}
+	})
+).then( function() {
+	console.log("done!")
+})
+```
+
+
 ## FAQ
 1. **How is this different from [HTMLBars](https://npmjs.com/htmlbars)?**  
 HTMLBars *builds* a DOM whereas this library *allows* you to build a DOM and especially a virtual DOM.
 
 
 ## Roadmap Features
-* test downlevel-revealed conditional comments in IE (with the `--`) to see how they render
 * add support for sub-expressions
 * add support for `{{#if}}`,`{{else}}`,`{{else if}}`,`{{#unless}}`
-* add support for `{{#with}}`,`{{#each}}`,`{{@index}}`,`{{@key}}`,`{{this}}`,`{{.}}`,`{{undefined}}`,`{{null}}`,`{{true}}`,`{{1}}`
+* add support for `{{#with}}`,`{{#each}}`,`{{@index}}`,`{{@key}}`,`{{this}}`,`{{.}}`
 * add support for `{{> partial}}`
 * `options.mustacheOnly` that disables helpers, expressions and whitespace control? would have to provide parse errors
 * `options.xmlMode` with [xmldoc](https://npmjs.com/xmldoc) ?
 
 
 ## Changelog
-* 0.0.1–0.0.17 pre-releases
+* 0.0.1–0.0.18 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg

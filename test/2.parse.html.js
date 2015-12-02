@@ -1,13 +1,12 @@
 "use strict";
 //var devlog  = require("../lib/devlog");
-var options = require("../lib/options");
+var options = require("../lib/parseOptions");
 var parse   = require("../lib/parse");
 
-var chai = require("chai");
-//var fs = require("fs");
+var utils = require("./utils");
 
-var expect = chai.expect;
-chai.use( require("chai-as-promised") );
+var expect = require("chai").expect;
+//var fs = require("fs");
 
 
 

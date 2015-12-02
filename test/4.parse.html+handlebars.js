@@ -1,16 +1,12 @@
 "use strict";
 //var devlog  = require("../lib/devlog");
-var options = require("../lib/options");
+var options = require("../lib/parseOptions");
 var parse   = require("../lib/parse");
 
-var chai = require("chai");
+var utils = require("./utils");
+
+var expect = require("chai").expect;
 var fs = require("fs");
-
-var expect = chai.expect;
-chai.use( require("chai-as-promised") );
-
-// postcss uses native promises (and thus, won't work on Node 0.10)
-global.Promise = require("bluebird");
 
 
 
@@ -284,7 +280,7 @@ describe("parse()", function()
 				
 				
 				
-				it('should not support empty <style>', function()
+				it('should support empty <style>', function()
 				{
 					var result = parse('<style> </style>', options({ processCSS:true }));
 					
@@ -715,7 +711,8 @@ describe("parse()", function()
 				
 				it("should support event attributes", function()
 				{
-					var result = parse('<tag onclick="funcA(); if(something){ funcB() }">text</tag>', options({ processJS:true }));
+					var html = '<tag onclick="funcA(); if(something){ funcB() }">text</tag>';
+					var result = parse(html, options({ processJS:true }));
 					
 					return expect(result).to.eventually.deep.equal(
 					[
@@ -809,9 +806,17 @@ describe("parse()", function()
 				
 				
 				
+				it.skip("should not support event attributes containing a Handlebars expression", function()
+				{
+					
+				});
+				
+				
+				
 				it("should support javascript links", function()
 				{
-					var result = parse('<tag href="javascript: funcA(); if(something){ funcB() }">text</tag>', options({ processJS:true }));
+					var html = '<tag href="javascript: funcA(); if(something){ funcB() }">text</tag>';
+					var result = parse(html, options({ processJS:true }));
 					
 					return expect(result).to.eventually.deep.equal(
 					[
@@ -869,6 +874,13 @@ describe("parse()", function()
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
+				});
+				
+				
+				
+				it.skip("should not support javascript links containing a Handlebars expression", function()
+				{
+					
 				});
 				
 				
