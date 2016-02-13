@@ -93,7 +93,7 @@ Default value: `false`
 When `true`, will replace multiple standard whitespace characters (line breaks, tabs, regular spaces) with a single space. This helps improve runtime performance and lower compiled template file size.
 
 * Does not affect "special" whitespace chars such as `&nbsp;`, etc.
-* Does not affect text within `<pre>`,`<script>`,`<style>` tags
+* Does not affect text within `<pre>`,`<script>`,`<style>`,`<textarea>` tags
 * Does not affect text within "dynamic" tags (`<{{tag}}>`)
 * Does not affect HTML's rendered appearance (unless using CSS `white-space:pre`)
 
@@ -150,7 +150,7 @@ HTMLBars *builds* a DOM whereas this library *allows* you to build a DOM and esp
 
 
 ## Changelog
-* 0.0.1–0.0.18 pre-releases
+* 0.0.1–0.0.19 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg
