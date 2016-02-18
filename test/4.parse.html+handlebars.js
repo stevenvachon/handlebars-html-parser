@@ -351,8 +351,6 @@ describe("parse()", function()
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:"" },  // TODO :: have this removed?
-						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
 						{ type:"text", value:"style" },
@@ -718,8 +716,6 @@ describe("parse()", function()
 						{ type:"text", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
-						
-						{ type:"text", value:"" },  // TODO :: have this removed?
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },

@@ -273,9 +273,7 @@ describe("parse()", function()
 			it("should support whitespace control", function()
 			{
 				// TODO :: https://github.com/wycats/handlebars.js/issues/1181
-				//var result = parse('{{path~}} content {{{~path}}}', options());
-				
-				var result = parse('{{path~}} content {{~path}}', options());
+				var result = parse('{{path~}} content {{~{path}}}', options());
 				
 				return expect(result).to.eventually.deep.equal(
 				[
@@ -287,11 +285,11 @@ describe("parse()", function()
 					
 					{ type:"text", value:"content" },
 					
-					{ type:"hbsTagStart"/*, notEscaped:true*/, stripWhitespace:true },
+					{ type:"hbsTagStart", notEscaped:true, stripWhitespace:true },
 					{ type:"hbsExpressionStart" },
 					{ type:"hbsExpressionPath", value:["path"] },
 					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd"/*, notEscaped:true*/ }
+					{ type:"hbsTagEnd", notEscaped:true }
 				]);
 			});
 			

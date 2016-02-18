@@ -4,7 +4,7 @@
 
 Parse this:
 ```handlebars
-<tag> value {{{obj.value~}}} </tag>
+<tag> value {{{obj.value}~}} </tag>
 ```
 into this:
 ```js
@@ -141,6 +141,7 @@ HTMLBars *builds* a DOM whereas this library *allows* you to build a DOM and esp
 
 
 ## Roadmap Features
+* support `<{{tag}}></{{tag}}>` by aliasing to `<hbshtml-start1-end3></hbshtml-start1-end3>`
 * add support for sub-expressions
 * add support for `{{#if}}`,`{{else}}`,`{{else if}}`,`{{#unless}}`
 * add support for `{{#with}}`,`{{#each}}`,`{{@index}}`,`{{@key}}`,`{{this}}`,`{{.}}`
@@ -150,7 +151,7 @@ HTMLBars *builds* a DOM whereas this library *allows* you to build a DOM and esp
 
 
 ## Changelog
-* 0.0.1–0.0.19 pre-releases
+* 0.0.1–0.0.20 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg
