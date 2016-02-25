@@ -7,11 +7,11 @@ var expect = require("chai").expect;
 
 
 
-describe("Public API", function()
+describe("Public API", () =>
 {
-	describe(".parse()", function()
+	describe(".parse()", () =>
 	{
-		it("should work", function()
+		it("should work", () =>
 		{
 			var result = new parser().parse("template");
 			
@@ -21,7 +21,7 @@ describe("Public API", function()
 				expect(result).to.eventually.have.property("options").that.is.an("object"),
 				expect(result).to.eventually.have.property("program").that.deep.equals(
 				[
-					{ type:"text", value:"template" }
+					{ type:"literal", value:"template" }
 				])
 			]);
 		});
@@ -29,13 +29,13 @@ describe("Public API", function()
 	
 	
 	
-	describe(".each()", function()
+	describe(".each()", () =>
 	{
-		it("should work", function(done)
+		it("should work", done =>
 		{
 			new parser().parse("<tag>{{var}}</tag>").then
 			(
-				parser.each( function(node, state)
+				parser.each((node, state) =>
 				{
 					switch(node.type)
 					{
@@ -51,10 +51,23 @@ describe("Public API", function()
 						}
 					}
 				})
-			).then( function()
+			).then(program =>
 			{
+				expect(program).to.be.instanceOf(Object);
 				done();
 			});
+		});
+	});
+	
+	
+	
+	describe(".beautifyJS()", () =>
+	{
+		it("should work", () =>
+		{
+			var result = parser.beautifyJS("function test (varname) { 'asdf' }");
+			
+			expect(result).to.equal("function test(varname) {\n  \"asdf\";\n}");
 		});
 	});
 });

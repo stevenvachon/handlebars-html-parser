@@ -11,23 +11,25 @@ into this:
 [
     { type:"htmlTagStart" },
     { type:"htmlTagNameStart" },
-    { type:"text", value:"tag" },
+    { type:"literal", value:"tag" },
     { type:"htmlTagNameEnd" },
     { type:"htmlTagEnd" },
     
-    { type:"text", value:" value " },
+    { type:"literal", value:" value " },
     
-    { type:"hbsTagStart", notEscaped:true },
+    { type:"hbsTagStart", unescaped:true },
     { type:"hbsExpressionStart" },
-    { type:"hbsExpressionPath", value:["obj","value"] },
+    { type:"hbsPartStart" },
+    { type:"hbsPath", value:["obj","value"] },
+    { type:"hbsPartEnd" },
     { type:"hbsExpressionEnd" },
-    { type:"hbsTagEnd", stripWhitespace:true, notEscaped:true },
+    { type:"hbsTagEnd", unescaped:true, strip:true },
     
     // whitespace stripped
     
     { type:"htmlTagStart", closing:true },
     { type:"htmlTagNameStart" },
-    { type:"text", value:"tag" },
+    { type:"literal", value:"tag" },
     { type:"htmlTagNameEnd" },
     { type:"htmlTagEnd" }
 ]
@@ -38,7 +40,7 @@ For more information on the strengths, weaknesses and implementation details of 
 
 
 ## Installation
-[Node.js](http://nodejs.org/) `>= 0.10` is required; `< 4.0` will need `Promise` and `Object.assign` polyfills. ~~Type this at the command line:~~
+[Node.js](http://nodejs.org/) `>= 5` is required; `< 5.0` will need an ES6 compiler. ~~Type this at the command line:~~
 ```shell
 npm install handlebars-html-parser
 ```
@@ -67,7 +69,7 @@ Runs a provided Function once per element in the generated linear program.
 ## Constants
 
 ### .type.*
-A map of node types, especially useful with nodes in `parse()` callbacks. See the [full list](https://github.com/stevenvachon/handlebars-html-parser/blob/master/lib/NodeType.js).
+A map of node types. See the [full list](https://github.com/stevenvachon/handlebars-html-parser/blob/master/lib/NodeType.js).
 
 
 ## Options
@@ -112,37 +114,35 @@ When `true`, the contents of JavaScript tags, attributes and `href="javascript:�
 ```js
 var HandlebarsHtmlParser = require("handlebars-html-parser")
 
-var each = HandlebarsHtmlParser.each
+var eachNode = HandlebarsHtmlParser.each
 var NodeType = HandlebarsHtmlParser.type
 var parser = new HandlebarsHtmlParser(options)
 
-parser.parse("<tag>{{var}}</tag>").then( 
-	each( function(node, state) {
-		switch(node.type) {
-			case NodeType.HBS_EXPRESSION_START: {
-				// is expression start node
-				break
-			}
-			case NodeType.HTML_TAG_START: {
-				// is html tag start node
-				break
-			}
+parser.parse("<tag>{{var}}</tag>")
+.then( eachNode((node, state) => {
+	switch(node.type) {
+		case NodeType.HBS_EXPRESSION_START: {
+			// is expression start node
+			break
 		}
-	})
-).then( function() {
-	console.log("done!")
-})
+		case NodeType.HTML_TAG_START: {
+			// is html tag start node
+			break
+		}
+	}
+}))
+.then(program => console.log("done!"))
 ```
 
 
 ## FAQ
 1. **How is this different from [HTMLBars](https://npmjs.com/htmlbars)?**  
-HTMLBars *builds* a DOM whereas this library *allows* you to build a DOM and especially a virtual DOM.
+HTMLBars *builds* a DOM whereas this library *enables* you to build a DOM and especially a virtual DOM.
 
 
 ## Roadmap Features
-* support `<{{tag}}></{{tag}}>` by aliasing to `<hbshtml-start1-end3></hbshtml-start1-end3>`
-* add support for sub-expressions
+* do not normalize text within `<template>`
+* support `<{{tag}}></{{tag}}>` by aliasing to `<hbshtml-start1-end3></hbshtml-start1-end3>`?
 * add support for `{{#if}}`,`{{else}}`,`{{else if}}`,`{{#unless}}`
 * add support for `{{#with}}`,`{{#each}}`,`{{@index}}`,`{{@key}}`,`{{this}}`,`{{.}}`
 * add support for `{{> partial}}`
@@ -151,7 +151,7 @@ HTMLBars *builds* a DOM whereas this library *allows* you to build a DOM and esp
 
 
 ## Changelog
-* 0.0.1–0.0.20 pre-releases
+* 0.0.1–0.0.21 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg

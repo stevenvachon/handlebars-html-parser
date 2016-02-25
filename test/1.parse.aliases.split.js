@@ -9,9 +9,9 @@ var handlebars = require("handlebars");
 
 
 
-describe("aliases.split()", function()
+describe("aliases.split()", () =>
 {
-	it("should support aliases in the middle of the string", function()
+	it("should support aliases in the middle of the string", () =>
 	{
 		var hbs = "string";
 		hbs += "handlebars-html-parser-0-alias";
@@ -25,7 +25,7 @@ describe("aliases.split()", function()
 	
 	
 	
-	it("should support aliases at the beginning/end of the string", function()
+	it("should support aliases at the beginning/end of the string", () =>
 	{
 		var hbs = "handlebars-html-parser-0-alias";
 		hbs += "string";
@@ -37,7 +37,7 @@ describe("aliases.split()", function()
 	
 	
 	
-	it("should ignore expressions with no \"aliasX\"", function()
+	it("should ignore expressions with no \"aliasX\"", () =>
 	{
 		var hbs = "string";
 		hbs += "handlebars-html-parser-0-alias";
@@ -53,7 +53,7 @@ describe("aliases.split()", function()
 	
 	
 	
-	it("should support no aliases", function()
+	it("should support no aliases", () =>
 	{
 		var hbs = "string";
 		hbs += "handlebars-html-parser-alias";
@@ -66,7 +66,7 @@ describe("aliases.split()", function()
 	
 	
 	
-	it("should support html", function()
+	it("should support html", () =>
 	{
 		var hbs = __dirname + "/templates/test.hbs";
 		hbs = fs.readFileSync(hbs, {encoding:"utf8"});

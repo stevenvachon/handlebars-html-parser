@@ -10,13 +10,13 @@ var fs = require("fs");
 
 
 
-describe("parse()", function()
+describe("parse()", () =>
 {
-	describe("HTML+Handlebars", function()
+	describe("HTML+Handlebars", () =>
 	{
-		describe("compound templates", function()
+		describe("compound templates", () =>
 		{
-			it.skip("should support everything in one template", function()
+			it.skip("should support everything in one template", () =>
 			{
 				var template = __dirname+"/templates/test.hbs";
 				//var template = __dirname+"/templates/test.html";
@@ -28,24 +28,24 @@ describe("parse()", function()
 		
 		
 		
-		describe("options", function()
+		describe("options", () =>
 		{
-			describe("convertHbsComments = true", function()
+			describe("convertHbsComments = true", () =>
 			{
-				it("should work", function()
+				it("should work", () =>
 				{
 					var result = parse('{{! comment }} content {{!-- comment --}}', options({ convertHbsComments:true }));
 					
 					return expect(result).to.eventually.deep.equal(
 					[
 						{ type:"htmlCommentStart" },
-						{ type:"text", value:" comment " },
+						{ type:"literal", value:" comment " },
 						{ type:"htmlCommentEnd" },
 						
-						{ type:"text", value:" content " },
+						{ type:"literal", value:" content " },
 						
 						{ type:"htmlCommentStart" },
-						{ type:"text", value:" comment " },
+						{ type:"literal", value:" comment " },
 						{ type:"htmlCommentEnd" },
 					]);
 				});
@@ -53,21 +53,21 @@ describe("parse()", function()
 			
 			
 			
-			describe("normalizeWhitespace = true", function()
+			describe("normalizeWhitespace = true", () =>
 			{
-				it("should work", function()
+				it("should work", () =>
 				{
 					var result = parse("text©&copy; &nbsp;  ", options({ normalizeWhitespace:true }));
 					
 					return expect(result).to.eventually.deep.equal(
 					[
-						{ type:"text", value:"text©©   " },
+						{ type:"literal", value:"text©©   " },
 					]);
 				});
 				
 				
 				
-				it("should not support preformatted elements", function()
+				it("should not support preformatted elements", () =>
 				{
 					var html = '<pre>   </pre><script>   </script><style>   </style><textarea>   </textarea>';
 					var result = parse(html, options({ normalizeWhitespace:true }));
@@ -76,49 +76,49 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"pre" },
+						{ type:"literal", value:"pre" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
-						{ type:"text", value:"   " },
+						{ type:"literal", value:"   " },
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"pre" },
+						{ type:"literal", value:"pre" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
 						
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
-						{ type:"text", value:"   " },
+						{ type:"literal", value:"   " },
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
 						
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
-						{ type:"text", value:"   " },
+						{ type:"literal", value:"   " },
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
 						
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"textarea" },
+						{ type:"literal", value:"textarea" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
-						{ type:"text", value:"   " },
+						{ type:"literal", value:"   " },
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"textarea" },
+						{ type:"literal", value:"textarea" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -128,7 +128,7 @@ describe("parse()", function()
 			
 			
 			// NOTE :: autoprefixer not tested because its results change over time
-			describe("processCSS = true", function()
+			describe("processCSS = true", () =>
 			{
 				var styles;
 				styles  = '\n';
@@ -139,7 +139,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should support <style>", function()
+				it("should support <style>", () =>
 				{
 					var result = parse('<style>'+styles+'</style>', options({ processCSS:true }));
 					
@@ -147,15 +147,15 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:'.classname{property:value}' },
+						{ type:"literal", value:'.classname{property:value}' },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -163,7 +163,7 @@ describe("parse()", function()
 				
 				
 				
-				it('should support <style type="text/css">', function()
+				it('should support <style type="text/css">', () =>
 				{
 					var result = parse('<style type="text/css">'+styles+'</style>', options({ processCSS:true }));
 					
@@ -171,23 +171,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"type" },
+						{ type:"literal", value:"type" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:"text/css" },
+						{ type:"literal", value:"text/css" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:'.classname{property:value}' },
+						{ type:"literal", value:'.classname{property:value}' },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -195,7 +195,7 @@ describe("parse()", function()
 				
 				
 				
-				it('should not support <style type="text/not-css">', function()
+				it('should not support <style type="text/not-css">', () =>
 				{
 					var result = parse('<style type="text/not-css">'+styles+'</style>', options({ processCSS:true }));
 					
@@ -203,23 +203,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"type" },
+						{ type:"literal", value:"type" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:"text/not-css" },
+						{ type:"literal", value:"text/not-css" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:styles },
+						{ type:"literal", value:styles },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -227,7 +227,7 @@ describe("parse()", function()
 				
 				
 				
-				it('should not support <{{path}} type="text/css">', function()
+				it('should not support <{{path}} type="text/css">', () =>
 				{
 					var result = parse('<{{path}} type="text/css">'+styles+'</{{path}}>', options({ processCSS:true }));
 					
@@ -237,27 +237,31 @@ describe("parse()", function()
 						{ type:"htmlTagNameStart" },
 						{ type:"hbsTagStart" },
 						{ type:"hbsExpressionStart" },
-						{ type:"hbsExpressionPath", value:["path"] },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
 						{ type:"hbsExpressionEnd" },
 						{ type:"hbsTagEnd" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"type" },
+						{ type:"literal", value:"type" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:"text/css" },
+						{ type:"literal", value:"text/css" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:styles },
+						{ type:"literal", value:styles },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
 						{ type:"hbsTagStart" },
 						{ type:"hbsExpressionStart" },
-						{ type:"hbsExpressionPath", value:["path"] },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
 						{ type:"hbsExpressionEnd" },
 						{ type:"hbsTagEnd" },
 						{ type:"htmlTagNameEnd" },
@@ -267,7 +271,7 @@ describe("parse()", function()
 				
 				
 				
-				it('should not support <style type="{{path}}">', function()
+				it('should not support <style type="{{path}}">', () =>
 				{
 					var result = parse('<style type="{{path}}">'+styles+'</style>', options({ processCSS:true }));
 					
@@ -275,27 +279,29 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"type" },
+						{ type:"literal", value:"type" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
 						{ type:"hbsTagStart" },
 						{ type:"hbsExpressionStart" },
-						{ type:"hbsExpressionPath", value:["path"] },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
 						{ type:"hbsExpressionEnd" },
 						{ type:"hbsTagEnd" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:styles },
+						{ type:"literal", value:styles },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -303,7 +309,7 @@ describe("parse()", function()
 				
 				
 				
-				it.skip('should not support <style {{path}}>', function()
+				it.skip('should not support <style {{path}}>', () =>
 				{
 					var result = parse('<style {{path}}>'+styles+'</style>', options({ processCSS:true }));
 					
@@ -311,27 +317,29 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"type" },
+						{ type:"literal", value:"type" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
 						{ type:"hbsTagStart" },
 						{ type:"hbsExpressionStart" },
-						{ type:"hbsExpressionPath", value:["path"] },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
 						{ type:"hbsExpressionEnd" },
 						{ type:"hbsTagEnd" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:styles },
+						{ type:"literal", value:styles },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -339,7 +347,7 @@ describe("parse()", function()
 				
 				
 				
-				it('should support empty <style>', function()
+				it('should support empty <style>', () =>
 				{
 					var result = parse('<style> </style>', options({ processCSS:true }));
 					
@@ -347,13 +355,13 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -361,7 +369,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should not support style tags containing a Handlebars expression", function()
+				it("should not support style tags containing a Handlebars expression", () =>
 				{
 					var result,styles_p1,styles_p2;
 					
@@ -374,23 +382,25 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:styles_p1 },
+						{ type:"literal", value:styles_p1 },
 						
 						{ type:"hbsTagStart" },
 						{ type:"hbsExpressionStart" },
-						{ type:"hbsExpressionPath", value:["path"] },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
 						{ type:"hbsExpressionEnd" },
 						{ type:"hbsTagEnd" },
 						
-						{ type:"text", value:styles_p2 },
+						{ type:"literal", value:styles_p2 },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -398,7 +408,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should support style attributes", function()
+				it("should support style attributes", () =>
 				{
 					var result = parse('<tag style=" property: value; ">text</tag>', options({ processCSS:true }));
 					
@@ -406,23 +416,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:'property:value;' },
+						{ type:"literal", value:'property:value;' },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:"text" },
+						{ type:"literal", value:"text" },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -430,7 +440,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should support style attributes with a whitespace value", function()
+				it("should support style attributes with a whitespace value", () =>
 				{
 					var result = parse('<tag style=" ">text</tag>', options({ processCSS:true }));
 					
@@ -438,23 +448,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:"" },
+						{ type:"literal", value:"" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:"text" },
+						{ type:"literal", value:"text" },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -462,7 +472,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should support style attributes with an empty value", function()
+				it("should support style attributes with an empty value", () =>
 				{
 					var result = parse('<tag style="">text</tag>', options({ processCSS:true }));
 					
@@ -470,23 +480,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"style" },
+						{ type:"literal", value:"style" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:"" },
+						{ type:"literal", value:"" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:"text" },
+						{ type:"literal", value:"text" },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -495,7 +505,7 @@ describe("parse()", function()
 			
 			
 			
-			describe("processJS = true", function()
+			describe("processJS = true", () =>
 			{
 				var script;
 				script  = '\n';
@@ -506,7 +516,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should support <script>", function()
+				it("should support <script>", () =>
 				{
 					var result = parse('<script>'+script+'</script>', options({ processJS:true }));
 					
@@ -514,15 +524,15 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:'function funcA(n){funcB(n,"arg")}' },
+						{ type:"literal", value:'function funcA(n){funcB(n,"arg")}' },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -530,7 +540,7 @@ describe("parse()", function()
 				
 				
 				
-				it('should support <script type="text/javascript">', function()
+				it('should support <script type="text/javascript">', () =>
 				{
 					var result = parse('<script type="text/javascript">'+script+'</script>', options({ processJS:true }));
 					
@@ -538,23 +548,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"type" },
+						{ type:"literal", value:"type" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:"text/javascript" },
+						{ type:"literal", value:"text/javascript" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:'function funcA(n){funcB(n,"arg")}' },
+						{ type:"literal", value:'function funcA(n){funcB(n,"arg")}' },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -562,7 +572,7 @@ describe("parse()", function()
 				
 				
 				
-				it('should not support <script type="text/not-javascript">', function()
+				it('should not support <script type="text/not-javascript">', () =>
 				{
 					var result = parse('<script type="text/not-javascript">'+script+'</script>', options({ processJS:true }));
 					
@@ -570,23 +580,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"type" },
+						{ type:"literal", value:"type" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:"text/not-javascript" },
+						{ type:"literal", value:"text/not-javascript" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:script },
+						{ type:"literal", value:script },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -594,7 +604,7 @@ describe("parse()", function()
 				
 				
 				
-				it('should not support <{{path}} type="text/javascript">', function()
+				it('should not support <{{path}} type="text/javascript">', () =>
 				{
 					var result = parse('<{{path}} type="text/javascript">'+script+'</{{path}}>', options({ processJS:true }));
 					
@@ -604,27 +614,31 @@ describe("parse()", function()
 						{ type:"htmlTagNameStart" },
 						{ type:"hbsTagStart" },
 						{ type:"hbsExpressionStart" },
-						{ type:"hbsExpressionPath", value:["path"] },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
 						{ type:"hbsExpressionEnd" },
 						{ type:"hbsTagEnd" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"type" },
+						{ type:"literal", value:"type" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:"text/javascript" },
+						{ type:"literal", value:"text/javascript" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:script },
+						{ type:"literal", value:script },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
 						{ type:"hbsTagStart" },
 						{ type:"hbsExpressionStart" },
-						{ type:"hbsExpressionPath", value:["path"] },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
 						{ type:"hbsExpressionEnd" },
 						{ type:"hbsTagEnd" },
 						{ type:"htmlTagNameEnd" },
@@ -634,7 +648,7 @@ describe("parse()", function()
 				
 				
 				
-				it('should not support <script type="{{path}}">', function()
+				it('should not support <script type="{{path}}">', () =>
 				{
 					var result = parse('<script type="{{path}}">'+script+'</script>', options({ processJS:true }));
 					
@@ -642,34 +656,36 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"type" },
+						{ type:"literal", value:"type" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
 						{ type:"hbsTagStart" },
 						{ type:"hbsExpressionStart" },
-						{ type:"hbsExpressionPath", value:["path"] },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
 						{ type:"hbsExpressionEnd" },
 						{ type:"hbsTagEnd" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:script },
+						{ type:"literal", value:script },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
 				});
 				
 				
-				it.skip('should not support <script {{path}}>', function()
+				it.skip('should not support <script {{path}}>', () =>
 				{
 					var result = parse('<script {{path}}>'+script+'</script>', options({ processJS:true }));
 					
@@ -677,27 +693,29 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"type" },
+						{ type:"literal", value:"type" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
 						{ type:"hbsTagStart" },
 						{ type:"hbsExpressionStart" },
-						{ type:"hbsExpressionPath", value:["path"] },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
 						{ type:"hbsExpressionEnd" },
 						{ type:"hbsTagEnd" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:script },
+						{ type:"literal", value:script },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -705,7 +723,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should support empty <script>", function()
+				it("should support empty <script>", () =>
 				{
 					var result = parse('<script> </script>', options({ processJS:true }));
 					
@@ -713,13 +731,13 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -727,7 +745,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should not support script tags containing a Handlebars expression", function()
+				it("should not support script tags containing a Handlebars expression", () =>
 				{
 					var result,script_p1,script_p2;
 					
@@ -740,23 +758,25 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:script_p1 },
+						{ type:"literal", value:script_p1 },
 						
 						{ type:"hbsTagStart" },
 						{ type:"hbsExpressionStart" },
-						{ type:"hbsExpressionPath", value:["path"] },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
 						{ type:"hbsExpressionEnd" },
 						{ type:"hbsTagEnd" },
 						
-						{ type:"text", value:script_p2 },
+						{ type:"literal", value:script_p2 },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"script" },
+						{ type:"literal", value:"script" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -764,7 +784,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should support event attributes", function()
+				it("should support event attributes", () =>
 				{
 					var html = '<tag onclick="funcA(); if(something){ funcB() }">text</tag>';
 					var result = parse(html, options({ processJS:true }));
@@ -773,23 +793,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"onclick" },
+						{ type:"literal", value:"onclick" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:'funcA(),something&&funcB();' },
+						{ type:"literal", value:'funcA(),something&&funcB();' },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:"text" },
+						{ type:"literal", value:"text" },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -797,7 +817,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should support event attributes with a whitespace value", function()
+				it("should support event attributes with a whitespace value", () =>
 				{
 					var result = parse('<tag onclick=" ">text</tag>', options({ processJS:true }));
 					
@@ -805,23 +825,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"onclick" },
+						{ type:"literal", value:"onclick" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:"" },
+						{ type:"literal", value:"" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:"text" },
+						{ type:"literal", value:"text" },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -829,7 +849,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should support event attributes with an empty value", function()
+				it("should support event attributes with an empty value", () =>
 				{
 					var result = parse('<tag onclick="">text</tag>', options({ processJS:true }));
 					
@@ -837,23 +857,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"onclick" },
+						{ type:"literal", value:"onclick" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:"" },
+						{ type:"literal", value:"" },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:"text" },
+						{ type:"literal", value:"text" },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -861,14 +881,14 @@ describe("parse()", function()
 				
 				
 				
-				it.skip("should not support event attributes containing a Handlebars expression", function()
+				it.skip("should not support event attributes containing a Handlebars expression", () =>
 				{
 					
 				});
 				
 				
 				
-				it("should support javascript links", function()
+				it("should support javascript links", () =>
 				{
 					var html = '<tag href="javascript: funcA(); if(something){ funcB() }">text</tag>';
 					var result = parse(html, options({ processJS:true }));
@@ -877,23 +897,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"href" },
+						{ type:"literal", value:"href" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:'javascript:funcA(),something&&funcB();' },
+						{ type:"literal", value:'javascript:funcA(),something&&funcB();' },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:"text" },
+						{ type:"literal", value:"text" },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -901,7 +921,7 @@ describe("parse()", function()
 				
 				
 				
-				it("should support javascript links with only a scheme", function()
+				it("should support javascript links with only a scheme", () =>
 				{
 					var result = parse('<tag href="javascript:">text</tag>', options({ processJS:true }));
 					
@@ -909,23 +929,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"href" },
+						{ type:"literal", value:"href" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:'javascript:' },
+						{ type:"literal", value:'javascript:' },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:"text" },
+						{ type:"literal", value:"text" },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);
@@ -933,14 +953,14 @@ describe("parse()", function()
 				
 				
 				
-				it.skip("should not support javascript links containing a Handlebars expression", function()
+				it.skip("should not support javascript links containing a Handlebars expression", () =>
 				{
 					
 				});
 				
 				
 				
-				it("should not support non-javascript links", function()
+				it("should not support non-javascript links", () =>
 				{
 					var result = parse('<tag href="not-javascript">text</tag>', options({ processJS:true }));
 					
@@ -948,23 +968,23 @@ describe("parse()", function()
 					[
 						{ type:"htmlTagStart" },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlAttrStart" },
 						{ type:"htmlAttrNameStart" },
-						{ type:"text", value:"href" },
+						{ type:"literal", value:"href" },
 						{ type:"htmlAttrNameEnd" },
 						{ type:"htmlAttrValueStart" },
-						{ type:"text", value:'not-javascript' },
+						{ type:"literal", value:'not-javascript' },
 						{ type:"htmlAttrValueEnd" },
 						{ type:"htmlAttrEnd" },
 						{ type:"htmlTagEnd" },
 						
-						{ type:"text", value:"text" },
+						{ type:"literal", value:"text" },
 						
 						{ type:"htmlTagStart", closing:true },
 						{ type:"htmlTagNameStart" },
-						{ type:"text", value:"tag" },
+						{ type:"literal", value:"tag" },
 						{ type:"htmlTagNameEnd" },
 						{ type:"htmlTagEnd" }
 					]);

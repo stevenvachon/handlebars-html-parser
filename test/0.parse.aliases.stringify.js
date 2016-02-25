@@ -9,11 +9,11 @@ var handlebars = require("handlebars");
 
 
 
-describe("aliases.stringify()", function()
+describe("aliases.stringify()", () =>
 {
-	describe("comments", function()
+	describe("comments", () =>
 	{
-		it("should be aliased", function()
+		it("should be aliased", () =>
 		{
 			var hbs = "{{! comment }} content {{!-- comment --}}";
 			hbs = handlebars.parse(hbs);
@@ -26,9 +26,9 @@ describe("aliases.stringify()", function()
 	
 	
 	
-	describe("non-blocks", function()
+	describe("non-blocks", () =>
 	{
-		it("should be aliased", function()
+		it("should be aliased", () =>
 		{
 			var hbs = "{{path}} content {{path}}";
 			hbs = handlebars.parse(hbs);
@@ -40,7 +40,7 @@ describe("aliases.stringify()", function()
 		
 		
 		
-		it("should support dot-separations", function()
+		it("should support dot-separations", () =>
 		{
 			var hbs = "{{path.path}} content {{path.path}}";
 			hbs = handlebars.parse(hbs);
@@ -52,7 +52,7 @@ describe("aliases.stringify()", function()
 		
 		
 		
-		it("should support whitespace-control", function()
+		it("should support whitespace-control", () =>
 		{
 			var hbs = "{{path~}} content {{~path}}";
 			hbs = handlebars.parse(hbs);
@@ -65,9 +65,9 @@ describe("aliases.stringify()", function()
 	
 	
 	
-	describe("blocks", function()
+	describe("blocks", () =>
 	{
-		it("should be aliased", function()
+		it("should be aliased", () =>
 		{
 			var hbs = "{{#path}} content {{/path}}";
 			hbs = handlebars.parse(hbs);
@@ -79,7 +79,7 @@ describe("aliases.stringify()", function()
 		
 		
 		
-		it("should alias inverse blocks", function()
+		it("should alias inverse blocks", () =>
 		{
 			var hbs = "{{^path}} content {{/path}}";
 			hbs = handlebars.parse(hbs);
@@ -92,10 +92,10 @@ describe("aliases.stringify()", function()
 	
 	
 	
-	describe("more complex templates", function()
+	describe("more complex templates", () =>
 	{
 		// TODO :: just run this test?
-		it("should support everything in one template", function()
+		it("should support everything in one template", () =>
 		{
 			var hbs = __dirname + "/templates/test.hbs";
 			hbs = fs.readFileSync(hbs, {encoding:"utf8"});
