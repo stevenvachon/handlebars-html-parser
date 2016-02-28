@@ -1,5 +1,4 @@
 "use strict";
-//var devlog  = require("../lib/devlog");
 var options = require("../lib/parseOptions");
 var parse   = require("../lib/parse");
 

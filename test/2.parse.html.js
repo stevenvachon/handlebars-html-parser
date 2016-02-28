@@ -1,12 +1,10 @@
 "use strict";
-//var devlog  = require("../lib/devlog");
 var options = require("../lib/parseOptions");
 var parse   = require("../lib/parse");
 
 var utils = require("./utils");
 
 var expect = require("chai").expect;
-//var fs = require("fs");
 
 
 
@@ -364,32 +362,7 @@ describe("parse()", () =>
 		
 		
 		
-		// TODO :: https://github.com/inikulin/parse5/issues/107
-		it.skip("should support <template> tags", () =>
-		{
-			var result = parse('<template><tag attr="value">text</tag></template>', options());
-			
-			return expect(result).to.eventually.deep.equal(
-			[
-				{ type:"htmlTagStart" },
-				{ type:"htmlTagNameStart" },
-				{ type:"literal", value:"template" },
-				{ type:"htmlTagNameEnd" },
-				{ type:"htmlTagEnd" },
-				
-				{ type:"literal", value:'<tag attr="value">text</tag>' },
-				
-				{ type:"htmlTagStart", closing:true },
-				{ type:"htmlTagNameStart" },
-				{ type:"literal", value:"template" },
-				{ type:"htmlTagNameEnd" },
-				{ type:"htmlTagEnd" }
-			]);
-		});
-		
-		
-		
-		// TODO :: test `<template>{{path}}<tag></tag></template`
+		// TODO :: `<script type="text/non-javascript">{{#path}}<tag>should not be parsed as html</tag>{{/path}}</script>`
 		
 		
 		

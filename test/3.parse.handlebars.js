@@ -1,12 +1,10 @@
 "use strict";
-//var devlog  = require("../lib/devlog");
 var options = require("../lib/parseOptions");
 var parse   = require("../lib/parse");
 
 var utils = require("./utils");
 
 var expect = require("chai").expect;
-//var fs = require("fs");
 
 
 
@@ -206,7 +204,7 @@ describe("parse()", () =>
 			
 			
 			
-			it.skip("should support partials", () =>
+			it("should support partials", () =>
 			{
 				var result = parse('{{> path}} content {{> path}}', options());
 				
@@ -220,7 +218,7 @@ describe("parse()", () =>
 					{ type:"hbsExpressionEnd" },
 					{ type:"hbsTagEnd" },
 					
-					{ type:"literal", value:"content" },
+					{ type:"literal", value:" content " },
 					
 					{ type:"hbsTagStart", partial:true },
 					{ type:"hbsExpressionStart" },
@@ -1011,6 +1009,34 @@ describe("parse()", () =>
 			
 			
 			
+			it("should support data references with whitespace control", () =>
+			{
+				var result = parse('{{~#@path~}} content {{~/@path~}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", strip:true, block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"], data:true },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true },
+					
+					{ type:"literal", value:"content" },
+					
+					{ type:"hbsTagStart", strip:true, closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"], data:true },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true }
+				]);
+			});
+			
+			
+			
 			it("should support undefined", () =>
 			{
 				var result = parse('{{#undefined}} content {{/undefined}}', options());
@@ -1034,6 +1060,34 @@ describe("parse()", () =>
 					{ type:"hbsPartEnd" },
 					{ type:"hbsExpressionEnd" },
 					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should support strings with whitespace control", () =>
+			{
+				var result = parse('{{~#undefined~}} content {{~/undefined~}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", strip:true, block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:undefined },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true },
+					
+					{ type:"literal", value:"content" },
+					
+					{ type:"hbsTagStart", strip:true, closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:undefined },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true }
 				]);
 			});
 			
@@ -1067,6 +1121,34 @@ describe("parse()", () =>
 			
 			
 			
+			it("should support null with whitespace control", () =>
+			{
+				var result = parse('{{~#null~}} content {{~/null~}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", strip:true, block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:null },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true },
+					
+					{ type:"literal", value:"content" },
+					
+					{ type:"hbsTagStart", strip:true, closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:null },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true }
+				]);
+			});
+			
+			
+			
 			it("should support booleans", () =>
 			{
 				var result = parse('{{#true}} content {{/true}}', options());
@@ -1090,6 +1172,34 @@ describe("parse()", () =>
 					{ type:"hbsPartEnd" },
 					{ type:"hbsExpressionEnd" },
 					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should support booleans with whitespace control", () =>
+			{
+				var result = parse('{{~#true~}} content {{~/true~}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", strip:true, block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:true },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true },
+					
+					{ type:"literal", value:"content" },
+					
+					{ type:"hbsTagStart", strip:true, closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:true },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true }
 				]);
 			});
 			
@@ -1123,6 +1233,34 @@ describe("parse()", () =>
 			
 			
 			
+			it("should support integers with whitespace control", () =>
+			{
+				var result = parse('{{~#1~}} content {{~/1~}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", strip:true, block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:1 },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true },
+					
+					{ type:"literal", value:"content" },
+					
+					{ type:"hbsTagStart", strip:true, closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:1 },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true }
+				]);
+			});
+			
+			
+			
 			it("should support floats", () =>
 			{
 				var result = parse('{{#1.1}} content {{/1.1}}', options());
@@ -1151,6 +1289,34 @@ describe("parse()", () =>
 			
 			
 			
+			it("should support floats with whitespace control", () =>
+			{
+				var result = parse('{{~#1.1~}} content {{~/1.1~}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", strip:true, block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:1.1 },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true },
+					
+					{ type:"literal", value:"content" },
+					
+					{ type:"hbsTagStart", strip:true, closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:1.1 },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true }
+				]);
+			});
+			
+			
+			
 			it("should support strings", () =>
 			{
 				var result = parse('{{#"string"}} content {{/"string"}}', options());
@@ -1174,6 +1340,34 @@ describe("parse()", () =>
 					{ type:"hbsPartEnd" },
 					{ type:"hbsExpressionEnd" },
 					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should support strings with whitespace control", () =>
+			{
+				var result = parse('{{~#"string"~}} content {{~/"string"~}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", strip:true, block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:"string" },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true },
+					
+					{ type:"literal", value:"content" },
+					
+					{ type:"hbsTagStart", strip:true, closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:"string" },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd", strip:true }
 				]);
 			});
 			
@@ -1209,11 +1403,11 @@ describe("parse()", () =>
 			
 			it("should support inverse with whitespace control", () =>
 			{
-				var result = parse('{{^path~}} content {{~/path}}', options());
+				var result = parse('{{~^path~}} content {{~/path~}}', options());
 				
 				return expect(result).to.eventually.deep.equal(
 				[
-					{ type:"hbsTagStart", block:true, inverted:true },
+					{ type:"hbsTagStart", strip:true, block:true, inverted:true },
 					{ type:"hbsExpressionStart" },
 					{ type:"hbsPartStart" },
 					{ type:"hbsPath", value:["path"] },
@@ -1229,7 +1423,7 @@ describe("parse()", () =>
 					{ type:"hbsPath", value:["path"] },
 					{ type:"hbsPartEnd" },
 					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" }
+					{ type:"hbsTagEnd", strip:true }
 				]);
 			});
 			
