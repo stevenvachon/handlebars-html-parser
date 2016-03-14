@@ -1,7 +1,7 @@
 {
   "name": "handlebars-html-parser",
   "description": "Parse Handlebars and HTML.",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "license": "MIT",
   "homepage": "https://github.com/stevenvachon/handlebars-html-parser",
   "author": {
@@ -24,7 +24,7 @@
     "handlebars": "^4.0.5",
     "normalize-html-whitespace": "~0.2.0",
     "parse5": "^2.1.5",
-    "postcss": "^5.0.18",
+    "postcss": "^5.0.19",
     "promise-each": "^2.2.0",
     "trim-left": "^1.0.1",
     "trim-right": "^1.0.1",

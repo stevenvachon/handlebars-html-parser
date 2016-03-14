@@ -1539,6 +1539,76 @@ describe("parse()", () =>
 			
 			
 			
+			it("should support block parameters", () =>
+			{
+				var result = parse('{{#path 1 2 3 as |param0 param1 param2|}} {{param0}} {{param1}} {{param2}} {{/path}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:1 },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:2 },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:3 },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsBlockParams", value:["param0","param1","param2"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" " },
+					
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["param0"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" " },
+					
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["param1"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" " },
+					
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["param2"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" " },
+					
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
 			it("should support standard and hash parameters", () =>
 			{
 				var result = parse('{{#path "param0" path.param1 param2=path.path param3="string"}} content {{/path}}', options());
@@ -1575,6 +1645,68 @@ describe("parse()", () =>
 					{ type:"literal", value:"string" },
 					{ type:"hbsHashValueEnd" },
 					{ type:"hbsHashEnd" },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content " },
+					
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should support standard, hash and block parameters", () =>
+			{
+				var hbs = '';
+				hbs += '{{#path "param0" path.param1 param2=path.path param3="string" as |param0 param1|}}';
+				hbs += ' content ';
+				hbs += '{{/path}}';
+				
+				var result = parse(hbs, options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"literal", value:"param0" },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path","param1"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsHashStart" },
+					{ type:"hbsHashKeyStart" },
+					{ type:"literal", value:"param2" },
+					{ type:"hbsHashKeyEnd" },
+					{ type:"hbsHashValueStart" },
+					{ type:"hbsPath", value:["path","path"] },
+					{ type:"hbsHashValueEnd" },
+					{ type:"hbsHashEnd" },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsHashStart" },
+					{ type:"hbsHashKeyStart" },
+					{ type:"literal", value:"param3" },
+					{ type:"hbsHashKeyEnd" },
+					{ type:"hbsHashValueStart" },
+					{ type:"literal", value:"string" },
+					{ type:"hbsHashValueEnd" },
+					{ type:"hbsHashEnd" },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsBlockParams", value:["param0","param1"] },
 					{ type:"hbsPartEnd" },
 					{ type:"hbsExpressionEnd" },
 					{ type:"hbsTagEnd" },
@@ -1723,6 +1855,189 @@ describe("parse()", () =>
 					{ type:"hbsExpressionStart" },
 					{ type:"hbsPartStart" },
 					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+		});
+		
+		
+		
+		// https://github.com/wycats/handlebars.js/blob/master/spec/builtins.js
+		describe("built-in helpers", () =>
+		{
+			it("should support each/index/key/first/last", () =>
+			{
+				var result = parse('{{#each path}}{{@index}}{{@key}}{{@first}}{{@last}}{{/each}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["each"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["index"], data:true },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["key"], data:true },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["first"], data:true },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["last"], data:true },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["each"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+				]);
+			});
+			
+			
+			
+			it("should support each with block parameters", () =>
+			{
+				var result = parse('{{#each path as |value index|}}{{value}}{{index}}{{/each}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["each"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsBlockParams", value:["value","index"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["value"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"hbsTagStart" },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["index"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["each"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it.skip("should support if/else if/else", () =>
+			{
+				var result = parse('{{#if path}} content1 {{else if path}} content2 {{else}} content3 {{/if}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+				]);
+			});
+			
+			
+			
+			it.skip("should support with/else", () =>
+			{
+				var result = parse('{{#with path}} content1 {{else}} content2 {{/with}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["with"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content1 " },
+					
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["with"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					{ type:"hbsTagStart", block:true, inverted:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["with"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content2 " },
+					
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["with"] },
 					{ type:"hbsPartEnd" },
 					{ type:"hbsExpressionEnd" },
 					{ type:"hbsTagEnd" }
