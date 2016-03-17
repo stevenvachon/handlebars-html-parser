@@ -880,9 +880,51 @@ describe("parse()", () =>
 				
 				
 				
-				it.skip("should not support event attributes containing a Handlebars expression", () =>
+				it("should not support event attributes containing a Handlebars expression", () =>
 				{
+					var result,script_p1,script_p2;
 					
+					script_p1 = 'funcA(); if(something){ funcB(\'';
+					script_p2 = '\') }';
+					
+					result = parse('<tag onclick="'+script_p1+'{{path}}'+script_p2+'">text</tag>', options({ processJS:true }));
+					
+					return expect(result).to.eventually.deep.equal(
+					[
+						{ type:"htmlTagStart" },
+						{ type:"htmlTagNameStart" },
+						{ type:"literal", value:"tag" },
+						{ type:"htmlTagNameEnd" },
+						{ type:"htmlAttrStart" },
+						{ type:"htmlAttrNameStart" },
+						{ type:"literal", value:"onclick" },
+						{ type:"htmlAttrNameEnd" },
+						{ type:"htmlAttrValueStart" },
+						
+						{ type:"literal", value:script_p1 },
+						
+						{ type:"hbsTagStart" },
+						{ type:"hbsExpressionStart" },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
+						{ type:"hbsExpressionEnd" },
+						{ type:"hbsTagEnd" },
+						
+						{ type:"literal", value:script_p2 },
+						
+						{ type:"htmlAttrValueEnd" },
+						{ type:"htmlAttrEnd" },
+						{ type:"htmlTagEnd" },
+						
+						{ type:"literal", value:"text" },
+						
+						{ type:"htmlTagStart", closing:true },
+						{ type:"htmlTagNameStart" },
+						{ type:"literal", value:"tag" },
+						{ type:"htmlTagNameEnd" },
+						{ type:"htmlTagEnd" }
+					]);
 				});
 				
 				
@@ -952,9 +994,51 @@ describe("parse()", () =>
 				
 				
 				
-				it.skip("should not support javascript links containing a Handlebars expression", () =>
+				it("should not support javascript links containing a Handlebars expression", () =>
 				{
+					var result,script_p1,script_p2;
 					
+					script_p1 = 'javascript:funcA(); if(something){ funcB(\'';
+					script_p2 = '\') }';
+					
+					result = parse('<tag href="'+script_p1+'{{path}}'+script_p2+'">text</tag>', options({ processJS:true }));
+					
+					return expect(result).to.eventually.deep.equal(
+					[
+						{ type:"htmlTagStart" },
+						{ type:"htmlTagNameStart" },
+						{ type:"literal", value:"tag" },
+						{ type:"htmlTagNameEnd" },
+						{ type:"htmlAttrStart" },
+						{ type:"htmlAttrNameStart" },
+						{ type:"literal", value:"href" },
+						{ type:"htmlAttrNameEnd" },
+						{ type:"htmlAttrValueStart" },
+						
+						{ type:"literal", value:script_p1 },
+						
+						{ type:"hbsTagStart" },
+						{ type:"hbsExpressionStart" },
+						{ type:"hbsPartStart" },
+						{ type:"hbsPath", value:["path"] },
+						{ type:"hbsPartEnd" },
+						{ type:"hbsExpressionEnd" },
+						{ type:"hbsTagEnd" },
+						
+						{ type:"literal", value:script_p2 },
+						
+						{ type:"htmlAttrValueEnd" },
+						{ type:"htmlAttrEnd" },
+						{ type:"htmlTagEnd" },
+						
+						{ type:"literal", value:"text" },
+						
+						{ type:"htmlTagStart", closing:true },
+						{ type:"htmlTagNameStart" },
+						{ type:"literal", value:"tag" },
+						{ type:"htmlTagNameEnd" },
+						{ type:"htmlTagEnd" }
+					]);
 				});
 				
 				

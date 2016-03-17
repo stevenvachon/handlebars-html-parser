@@ -151,7 +151,7 @@ HTMLBars *builds* a DOM whereas this library *enables* you to build a DOM and es
 
 
 ## Changelog
-* 0.0.1–0.0.23 pre-releases
+* 0.0.1–0.0.24 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg
