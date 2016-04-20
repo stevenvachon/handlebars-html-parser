@@ -1,7 +1,7 @@
 {
   "name": "handlebars-html-parser",
   "description": "Parse Handlebars and HTML.",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "license": "MIT",
   "homepage": "https://github.com/stevenvachon/handlebars-html-parser",
   "author": {
@@ -18,7 +18,7 @@
     "url": "https://github.com/stevenvachon/handlebars-html-parser/issues"
   },
   "dependencies": {
-    "autoprefixer": "^6.3.3",
+    "autoprefixer": "^6.3.6",
     "cssnano": "^3.5.2",
     "event-attributes": "^1.0.1",
     "handlebars": "^4.0.5",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "chai-as-promised": "^5.2.0",
+    "chai-as-promised": "^5.3.0",
     "mocha": "^2.4.5"
   },
   "engines": {

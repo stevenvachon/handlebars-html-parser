@@ -137,21 +137,24 @@ parser.parse("<tag>{{var}}</tag>")
 
 ## FAQ
 1. **How is this different from [HTMLBars](https://npmjs.com/htmlbars)?**  
-HTMLBars *builds* a DOM whereas this library *enables* you to build a DOM and especially a virtual DOM.
+HTMLBars *builds* an *opinionated* DOM whereas this library *enables* you to build a *custom* DOM with any and all reactive binding logic offloaded to a library of your choice.
+
+2. **Why not just extend the Handlebars AST?**  
+Less maintenance. The result of extending it would still require a custom compiler because the AST would be incompatible with the Handlebars compiler. Every breaking change made to Handlebars will require such to this parser, but likely not to its [compiler](https://github.com/stevenvachon/handlebars-html-compiler).
 
 
 ## Roadmap Features
 * figure out what `inverseStrip` (in hbs ast) is used for
 * support raw blocks: `{{{{raw-helper}}}} {{path}} {{{{/raw-helper}}}}`
 * support `<{{tag}}></{{tag}}>` by aliasing to `<hbshtml-start1-end3></hbshtml-start1-end3>`?
-* add support for `{{#if}}`,`{{else}}`,`{{else if}}`,`{{#unless}}`
-* add support for `{{#with}}`,`{{this}}`,`{{.}}`
+* add support for `{{this}}`,`{{.}}`
+* add default whitespace control to "standalone" tags: http://handlebarsjs.com/expressions.html#whitespace-control
 * `options.mustacheOnly` that disables helpers, expressions and whitespace control? would have to provide parse errors
 * `options.xmlMode` with [xmldoc](https://npmjs.com/xmldoc) ?
 
 
 ## Changelog
-* 0.0.1–0.0.24 pre-releases
+* 0.0.1–0.0.25 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg

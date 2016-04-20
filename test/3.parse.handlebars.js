@@ -1976,26 +1976,362 @@ describe("parse()", () =>
 			
 			
 			
-			it.skip("should support if/else if/else", () =>
+			it("should support if/else if/else", () =>
 			{
-				var result = parse('{{#if path}} content1 {{else if path}} content2 {{else}} content3 {{/if}}', options());
+				var result = parse('{{#if path1}} content1 {{else if path2}} content2 {{else}} content3 {{/if}}', options());
 				
+				/*
+					What Handlebars does:
+					
+					{{#if path1}}
+						content1
+					{{else}}
+						{{#if path2}}
+							content2
+						{{else}}
+							content3
+						{{/if}}
+					{{/if}}
+				*/
 				return expect(result).to.eventually.deep.equal(
 				[
+					// `{{#if path1}}`
 					{ type:"hbsTagStart", block:true },
 					{ type:"hbsExpressionStart" },
 					{ type:"hbsPartStart" },
 					{ type:"hbsPath", value:["if"] },
 					{ type:"hbsPartEnd" },
 					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPath", value:["path1"] },
 					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content1 " },
+					
+					// `{{else}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					// `{{#if path2}}`
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path2"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content2 " },
+					
+					// `{{else}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content3 " },
+					
+					// `{{/if}}`
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					// `{{/if}}`
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
 				]);
 			});
 			
 			
 			
-			it.skip("should support with/else", () =>
+			it("should support if/else if/^", () =>
+			{
+				var result = parse('{{#if path1}} content1 {{else if path2}} content2 {{^}} content3 {{/if}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					// `{{#if path1}}`
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path1"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content1 " },
+					
+					// `{{else}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					// `{{#if path2}}`
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path2"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content2 " },
+					
+					// `{{^}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content3 " },
+					
+					// `{{/if}}`
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					// `{{/if}}`
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should support if/^", () =>
+			{
+				var result = parse('{{#if path1}} content1 {{^}} content2 {{/if}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					// `{{#if path1}}`
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path1"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content1 " },
+					
+					// `{{^}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content2 " },
+					
+					// `{{/if}}`
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should support unless/else if/else", () =>
+			{
+				var result = parse('{{#unless path1}} content1 {{else if path2}} content2 {{else}} content3 {{/unless}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					// `{{#unless path1}}`
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["unless"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path1"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content1 " },
+					
+					// `{{else}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					// `{{#if path2}}`
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path2"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content2 " },
+					
+					// `{{else}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content3 " },
+					
+					// `{{/if}}`
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					// `{{/unless}}`
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["unless"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should support unless/else if/^", () =>
+			{
+				var result = parse('{{#unless path1}} content1 {{else if path2}} content2 {{^}} content3 {{/unless}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					// `{{#unless path1}}`
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["unless"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path1"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content1 " },
+					
+					// `{{else}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					// `{{#if path2}}`
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path2"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content2 " },
+					
+					// `{{^}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content3 " },
+					
+					// `{{/if}}`
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					// `{{/unless}}`
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["unless"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should support unless/^", () =>
+			{
+				var result = parse('{{#unless path1}} content1 {{^}} content2 {{/unless}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					// `{{#unless path1}}`
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["unless"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path1"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content1 " },
+					
+					// `{{^}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content2 " },
+					
+					// `{{/unless}}`
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["unless"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should support with/else", () =>
 			{
 				var result = parse('{{#with path}} content1 {{else}} content2 {{/with}}', options());
 				
@@ -2014,14 +2350,34 @@ describe("parse()", () =>
 					
 					{ type:"literal", value:" content1 " },
 					
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content2 " },
+					
 					{ type:"hbsTagStart", closing:true },
 					{ type:"hbsExpressionStart" },
 					{ type:"hbsPartStart" },
 					{ type:"hbsPath", value:["with"] },
 					{ type:"hbsPartEnd" },
 					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" },
-					{ type:"hbsTagStart", block:true, inverted:true },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should support with/^", () =>
+			{
+				var result = parse('{{#with path}} content1 {{^}} content2 {{/with}}', options());
+				
+				//utils.devlog( require("handlebars").parse('{{#if path1}} content1 {{else if path2}} content2 {{else}} content3 {{/if}}') );
+				
+				//return result.then(result => utils.devlog(result));
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", block:true },
 					{ type:"hbsExpressionStart" },
 					{ type:"hbsPartStart" },
 					{ type:"hbsPath", value:["with"] },
@@ -2030,6 +2386,11 @@ describe("parse()", () =>
 					{ type:"hbsPath", value:["path"] },
 					{ type:"hbsPartEnd" },
 					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content1 " },
+					
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
 					{ type:"hbsTagEnd" },
 					
 					{ type:"literal", value:" content2 " },
