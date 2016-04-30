@@ -122,6 +122,87 @@ describe("parse()", () =>
 						{ type:"htmlTagEnd" }
 					]);
 				});
+				
+				
+				
+				it("should not support elements within preformatted elements", () =>
+				{
+					var html = '<pre>   <span>   </span>   </pre>';
+					var result = parse(html, options({ normalizeWhitespace:true }));
+					
+					return expect(result).to.eventually.deep.equal(
+					[
+						{ type:"htmlTagStart" },
+						{ type:"htmlTagNameStart" },
+						{ type:"literal", value:"pre" },
+						{ type:"htmlTagNameEnd" },
+						{ type:"htmlTagEnd" },
+						
+						{ type:"literal", value:"   " },
+						
+						{ type:"htmlTagStart" },
+						{ type:"htmlTagNameStart" },
+						{ type:"literal", value:"span" },
+						{ type:"htmlTagNameEnd" },
+						{ type:"htmlTagEnd" },
+						
+						{ type:"literal", value:"   " },
+						
+						{ type:"htmlTagStart", closing:true },
+						{ type:"htmlTagNameStart" },
+						{ type:"literal", value:"span" },
+						{ type:"htmlTagNameEnd" },
+						{ type:"htmlTagEnd" },
+						
+						{ type:"literal", value:"   " },
+						
+						{ type:"htmlTagStart", closing:true },
+						{ type:"htmlTagNameStart" },
+						{ type:"literal", value:"pre" },
+						{ type:"htmlTagNameEnd" },
+						{ type:"htmlTagEnd" }
+					]);
+				});
+				
+				
+				
+				it("should not support attribute values", () =>
+				{
+					var result = parse('<tag attr1="value  value"  attr2="value"></tag>', options({ normalizeWhitespace:true }));
+					
+					//return result.then(result => utils.devlog(result));
+					
+					return expect(result).to.eventually.deep.equal(
+					[
+						{ type:"htmlTagStart" },
+						{ type:"htmlTagNameStart" },
+						{ type:"literal", value:"tag" },
+						{ type:"htmlTagNameEnd" },
+						{ type:"htmlAttrStart" },
+						{ type:"htmlAttrNameStart" },
+						{ type:"literal", value:"attr1" },
+						{ type:"htmlAttrNameEnd" },
+						{ type:"htmlAttrValueStart" },
+						{ type:"literal", value:"value  value" },
+						{ type:"htmlAttrValueEnd" },
+						{ type:"htmlAttrEnd" },
+						{ type:"htmlAttrStart" },
+						{ type:"htmlAttrNameStart" },
+						{ type:"literal", value:"attr2" },
+						{ type:"htmlAttrNameEnd" },
+						{ type:"htmlAttrValueStart" },
+						{ type:"literal", value:"value" },
+						{ type:"htmlAttrValueEnd" },
+						{ type:"htmlAttrEnd" },
+						{ type:"htmlTagEnd" },
+						
+						{ type:"htmlTagStart", closing:true },
+						{ type:"htmlTagNameStart" },
+						{ type:"literal", value:"tag" },
+						{ type:"htmlTagNameEnd" },
+						{ type:"htmlTagEnd" }
+					]);
+				});
 			});
 			
 			

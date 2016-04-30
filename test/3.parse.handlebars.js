@@ -1864,10 +1864,115 @@ describe("parse()", () =>
 		
 		
 		
+		describe("chained inverse blocks", () =>
+		{
+			it("should be supported", () =>
+			{
+				var result = parse('{{#path}} content1 {{else}} content2 {{/path}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content1 " },
+					
+					// `{{else}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content2 " },
+					
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should be supported (#2)", () =>
+			{
+				var result = parse('{{#path}} content1 {{^}} content2 {{/path}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content1 " },
+					
+					// `{{^}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content2 " },
+					
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			it("should support inverse blocks", () =>
+			{
+				var result = parse('{{^path}} content1 {{^}} content2 {{/path}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content2 " },
+					
+					// `{{^}}`
+					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content1 " },
+					
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+		});
+		
+		
+		
 		// https://github.com/wycats/handlebars.js/blob/master/spec/builtins.js
 		describe("built-in helpers", () =>
 		{
-			it("should support each/index/key/first/last", () =>
+			it("should support each and its data references", () =>
 			{
 				var result = parse('{{#each path}}{{@index}}{{@key}}{{@first}}{{@last}}{{/each}}', options());
 				
@@ -1976,7 +2081,39 @@ describe("parse()", () =>
 			
 			
 			
-			it("should support if/else if/else", () =>
+			it("should support if", () =>
+			{
+				var result = parse('{{#if path}} content {{/if}}', options());
+				
+				return expect(result).to.eventually.deep.equal(
+				[
+					{ type:"hbsTagStart", block:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["path"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" },
+					
+					{ type:"literal", value:" content " },
+					
+					{ type:"hbsTagStart", closing:true },
+					{ type:"hbsExpressionStart" },
+					{ type:"hbsPartStart" },
+					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPartEnd" },
+					{ type:"hbsExpressionEnd" },
+					{ type:"hbsTagEnd" }
+				]);
+			});
+			
+			
+			
+			// TODO:: should not support `{{#if path}} {{^ if}} {{/if}}`
+			it("should support if/else if", () =>
 			{
 				var result = parse('{{#if path1}} content1 {{else if path2}} content2 {{else}} content3 {{/if}}', options());
 				
@@ -2055,64 +2192,29 @@ describe("parse()", () =>
 			
 			
 			
-			it("should support if/else if/^", () =>
+			it("should support unless", () =>
 			{
-				var result = parse('{{#if path1}} content1 {{else if path2}} content2 {{^}} content3 {{/if}}', options());
+				var result = parse('{{#unless path}} content {{/unless}}', options());
 				
 				return expect(result).to.eventually.deep.equal(
 				[
-					// `{{#if path1}}`
 					{ type:"hbsTagStart", block:true },
 					{ type:"hbsExpressionStart" },
 					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPath", value:["unless"] },
 					{ type:"hbsPartEnd" },
 					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["path1"] },
+					{ type:"hbsPath", value:["path"] },
 					{ type:"hbsPartEnd" },
 					{ type:"hbsExpressionEnd" },
 					{ type:"hbsTagEnd" },
 					
-					{ type:"literal", value:" content1 " },
+					{ type:"literal", value:" content " },
 					
-					// `{{else}}`
-					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
-					{ type:"hbsTagEnd" },
-					
-					// `{{#if path2}}`
-					{ type:"hbsTagStart", block:true },
-					{ type:"hbsExpressionStart" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["if"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["path2"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" },
-					
-					{ type:"literal", value:" content2 " },
-					
-					// `{{^}}`
-					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
-					{ type:"hbsTagEnd" },
-					
-					{ type:"literal", value:" content3 " },
-					
-					// `{{/if}}`
 					{ type:"hbsTagStart", closing:true },
 					{ type:"hbsExpressionStart" },
 					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["if"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" },
-					
-					// `{{/if}}`
-					{ type:"hbsTagStart", closing:true },
-					{ type:"hbsExpressionStart" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["if"] },
+					{ type:"hbsPath", value:["unless"] },
 					{ type:"hbsPartEnd" },
 					{ type:"hbsExpressionEnd" },
 					{ type:"hbsTagEnd" }
@@ -2121,46 +2223,7 @@ describe("parse()", () =>
 			
 			
 			
-			it("should support if/^", () =>
-			{
-				var result = parse('{{#if path1}} content1 {{^}} content2 {{/if}}', options());
-				
-				return expect(result).to.eventually.deep.equal(
-				[
-					// `{{#if path1}}`
-					{ type:"hbsTagStart", block:true },
-					{ type:"hbsExpressionStart" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["if"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["path1"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" },
-					
-					{ type:"literal", value:" content1 " },
-					
-					// `{{^}}`
-					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
-					{ type:"hbsTagEnd" },
-					
-					{ type:"literal", value:" content2 " },
-					
-					// `{{/if}}`
-					{ type:"hbsTagStart", closing:true },
-					{ type:"hbsExpressionStart" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["if"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" }
-				]);
-			});
-			
-			
-			
-			it("should support unless/else if/else", () =>
+			it("should support unless/else if", () =>
 			{
 				var result = parse('{{#unless path1}} content1 {{else if path2}} content2 {{else}} content3 {{/unless}}', options());
 				
@@ -2226,114 +2289,9 @@ describe("parse()", () =>
 			
 			
 			
-			it("should support unless/else if/^", () =>
+			it("should support with", () =>
 			{
-				var result = parse('{{#unless path1}} content1 {{else if path2}} content2 {{^}} content3 {{/unless}}', options());
-				
-				return expect(result).to.eventually.deep.equal(
-				[
-					// `{{#unless path1}}`
-					{ type:"hbsTagStart", block:true },
-					{ type:"hbsExpressionStart" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["unless"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["path1"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" },
-					
-					{ type:"literal", value:" content1 " },
-					
-					// `{{else}}`
-					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
-					{ type:"hbsTagEnd" },
-					
-					// `{{#if path2}}`
-					{ type:"hbsTagStart", block:true },
-					{ type:"hbsExpressionStart" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["if"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["path2"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" },
-					
-					{ type:"literal", value:" content2 " },
-					
-					// `{{^}}`
-					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
-					{ type:"hbsTagEnd" },
-					
-					{ type:"literal", value:" content3 " },
-					
-					// `{{/if}}`
-					{ type:"hbsTagStart", closing:true },
-					{ type:"hbsExpressionStart" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["if"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" },
-					
-					// `{{/unless}}`
-					{ type:"hbsTagStart", closing:true },
-					{ type:"hbsExpressionStart" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["unless"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" }
-				]);
-			});
-			
-			
-			
-			it("should support unless/^", () =>
-			{
-				var result = parse('{{#unless path1}} content1 {{^}} content2 {{/unless}}', options());
-				
-				return expect(result).to.eventually.deep.equal(
-				[
-					// `{{#unless path1}}`
-					{ type:"hbsTagStart", block:true },
-					{ type:"hbsExpressionStart" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["unless"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["path1"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" },
-					
-					{ type:"literal", value:" content1 " },
-					
-					// `{{^}}`
-					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
-					{ type:"hbsTagEnd" },
-					
-					{ type:"literal", value:" content2 " },
-					
-					// `{{/unless}}`
-					{ type:"hbsTagStart", closing:true },
-					{ type:"hbsExpressionStart" },
-					{ type:"hbsPartStart" },
-					{ type:"hbsPath", value:["unless"] },
-					{ type:"hbsPartEnd" },
-					{ type:"hbsExpressionEnd" },
-					{ type:"hbsTagEnd" }
-				]);
-			});
-			
-			
-			
-			it("should support with/else", () =>
-			{
-				var result = parse('{{#with path}} content1 {{else}} content2 {{/with}}', options());
+				var result = parse('{{#with path}} content {{/with}}', options());
 				
 				return expect(result).to.eventually.deep.equal(
 				[
@@ -2348,12 +2306,7 @@ describe("parse()", () =>
 					{ type:"hbsExpressionEnd" },
 					{ type:"hbsTagEnd" },
 					
-					{ type:"literal", value:" content1 " },
-					
-					{ type:"hbsTagStart", block:true, inverted:true, chained:true },
-					{ type:"hbsTagEnd" },
-					
-					{ type:"literal", value:" content2 " },
+					{ type:"literal", value:" content " },
 					
 					{ type:"hbsTagStart", closing:true },
 					{ type:"hbsExpressionStart" },
@@ -2367,13 +2320,10 @@ describe("parse()", () =>
 			
 			
 			
-			it("should support with/^", () =>
+			// TODO :: should not support `{{#with path1}} {{else if path2}} {{/with}}`
+			it("should support with/else", () =>
 			{
-				var result = parse('{{#with path}} content1 {{^}} content2 {{/with}}', options());
-				
-				//utils.devlog( require("handlebars").parse('{{#if path1}} content1 {{else if path2}} content2 {{else}} content3 {{/if}}') );
-				
-				//return result.then(result => utils.devlog(result));
+				var result = parse('{{#with path}} content1 {{else}} content2 {{/with}}', options());
 				
 				return expect(result).to.eventually.deep.equal(
 				[

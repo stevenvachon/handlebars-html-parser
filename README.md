@@ -95,8 +95,9 @@ Default value: `false`
 When `true`, will replace multiple standard whitespace characters (line breaks, tabs, regular spaces) with a single space. This helps improve runtime performance and lower compiled template file size.
 
 * Does not affect "special" whitespace chars such as `&nbsp;`, etc.
-* Does not affect text within `<pre>`,`<script>`,`<style>`,`<textarea>` tags
-* Does not affect text within "dynamic" tags (`<{{tag}}>`)
+* Does not affect text within `<pre>`,`<script>`,`<style>`,`<textarea>` elements
+* Does not affect text within "dynamic" elements (`<{{tag}}>`)
+* Does not affect attribute values (`<tag attr="value">`)
 * Does not affect HTML's rendered appearance (unless using CSS `white-space:pre`)
 
 ### options.processCSS
@@ -154,7 +155,7 @@ Less maintenance. The result of extending it would still require a custom compil
 
 
 ## Changelog
-* 0.0.1–0.0.25 pre-releases
+* 0.0.1–0.0.26 pre-releases
 
 
 [npm-image]: https://img.shields.io/npm/v/handlebars-html-parser.svg
