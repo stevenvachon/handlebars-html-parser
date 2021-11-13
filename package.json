@@ -28,7 +28,7 @@
     "promise-each": "^2.2.0",
     "trim-left": "^1.0.1",
     "trim-right": "^1.0.1",
-    "uglify-js": "^2.6.2"
+    "uglify-js": "^3.14.3"
   },
   "devDependencies": {
     "chai": "^3.5.0",
