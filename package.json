@@ -18,13 +18,13 @@
     "url": "https://github.com/stevenvachon/handlebars-html-parser/issues"
   },
   "dependencies": {
-    "autoprefixer": "^6.3.6",
-    "cssnano": "^3.5.2",
+    "autoprefixer": "^9.0.0",
+    "cssnano": "^4.1.1",
     "event-attributes": "^1.0.1",
     "handlebars": "^4.0.5",
     "normalize-html-whitespace": "~0.2.0",
     "parse5": "^2.1.5",
-    "postcss": "^5.0.19",
+    "postcss": "^7.0.37",
     "promise-each": "^2.2.0",
     "trim-left": "^1.0.1",
     "trim-right": "^1.0.1",
