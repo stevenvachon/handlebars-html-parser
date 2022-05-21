@@ -18,8 +18,8 @@
     "url": "https://github.com/stevenvachon/handlebars-html-parser/issues"
   },
   "dependencies": {
-    "autoprefixer": "^6.3.6",
-    "cssnano": "^3.5.2",
+    "autoprefixer": "^9.0.0",
+    "cssnano": "^4.0.0",
     "event-attributes": "^1.0.1",
     "handlebars": "^4.0.5",
     "normalize-html-whitespace": "~0.2.0",
